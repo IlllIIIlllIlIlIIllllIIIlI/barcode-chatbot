@@ -1,0 +1,28 @@
+{
+  "name": "barcode-chatbot",
+  "version": "1.0.0",
+  "description": "Twitch Chatbot",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsgreylolol/barcode-chatbot.git"
+  },
+  "author": "itsgreylolol",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itsgreylolol/barcode-chatbot/issues"
+  },
+  "homepage": "https://github.com/itsgreylolol/barcode-chatbot#readme",
+  "devDependencies": {
+    "@types/node": "^14.11.2",
+    "gts": "^3.1.1",
+    "typescript": "^4.4.0"
+  }
+}
