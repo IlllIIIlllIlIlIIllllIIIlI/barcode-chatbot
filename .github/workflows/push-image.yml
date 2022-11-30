@@ -7,9 +7,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@latest
+      - uses: actions/checkout@v3
       - name: Build container
-        uses: docker/build-push-action@latest
+        uses: docker/build-push-action@v2
         with:
           username: itsgreylolol
           password: ${{ secrets.GITHUB_TOKEN }}
