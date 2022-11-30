@@ -2,11 +2,9 @@
   "name": "barcode-chatbot",
   "version": "1.0.0",
   "description": "Twitch Chatbot",
-  "main": "dist/index.js",
   "scripts": {
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "tsc",
     "fix": "gts fix",
     "start": "tsc && node dist/index.js"
   },
