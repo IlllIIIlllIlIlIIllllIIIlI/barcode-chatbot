@@ -9,7 +9,7 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
     if (err) {
       console.log('File read failed:', err);
     } else {
-      let json = JSON.parse(jsonString.toString());
+      const json = JSON.parse(jsonString.toString());
       const cache = {
         lastUser: json['lastUser'],
         lastMessages: json['lastMessages'],
@@ -24,7 +24,7 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
           const first = cache['lastMessages'].length
             ? cache['lastMessages'][0]
             : message.parameters;
-          let temp = cache['lastMessages'];
+          const temp = cache['lastMessages'];
           temp.push(message.parameters);
           if (temp.length > 2) {
             const half = Math.ceil(temp.length / 2);
