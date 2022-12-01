@@ -1,9 +1,9 @@
-import {client as web_client} from 'websocket';
-import handleMessage from './util/handler';
-import config from './models/Config';
+import {Client} from 'tmi.js';
 import * as fs from 'fs';
+import {pyramidCheck} from './scripts/pyramidCheck';
+import config from './models/Config';
 
-const main = async () => {
+const main = () => {
   fs.readFile('src/cache/cache-template.json', (err, jsonString) => {
     if (err) {
       console.log('File read failed:', err);
@@ -15,35 +15,23 @@ const main = async () => {
       });
     }
   });
-  const client = new web_client();
-  const channel = '#barcode_chatbot';
-  const account = 'barcode_chatbot';
-  const password = `oauth:${config.OAUTH}`;
-
-  client.on('connectFailed', error => {
-    console.log(`Connect Error: ${error.toString()}`);
+  const client = new Client({
+    options: {debug: true},
+    identity: {
+      username: 'barcode_chatbot',
+      password: `oauth:${config.OAUTH}`,
+    },
+    channels: ['dogdog'],
   });
 
-  client.on('connect', connection => {
-    connection.sendUTF(`PASS ${password}`);
-    connection.sendUTF(`NICK ${account}`);
+  client.connect().catch(console.error);
 
-    connection.on('error', error => {
-      console.log(`Connect Error: ${error.toString()}`);
-    });
+  client.on('message', (channel, tags, message, self) => {
+    // Ignore echoed messages.
+    if (self) return;
 
-    connection.on('close', () => {
-      console.log('Connection Closed');
-      console.log(`close description: ${connection.closeDescription}`);
-      console.log(`close reason code: ${connection.closeReasonCode}`);
-    });
-
-    connection.on('message', message => {
-      handleMessage(message, connection, channel);
-    });
+    pyramidCheck(channel, tags, message, client);
   });
-
-  client.connect('wss://irc-ws.chat.twitch.tv:443');
 };
 
 main();

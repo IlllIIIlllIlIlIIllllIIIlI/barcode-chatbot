@@ -1,11 +1,15 @@
-import {connection} from 'websocket';
-import {ParsedMessage} from '../models/ParsedMessage';
 import * as fs from 'fs';
+import {ChatUserstate, Client} from 'tmi.js';
 
 const FILENAME = 'src/cache/cache.json';
 
-const pyramidCheck = (message: ParsedMessage, connection: connection) => {
-  fs.readFile(FILENAME, (err, jsonString) => {
+const pyramidCheck = (
+  channel: string,
+  tags: ChatUserstate,
+  message: string,
+  client: Client
+) => {
+  fs.readFile(FILENAME, async (err, jsonString) => {
     if (err) {
       console.log('File read failed:', err);
     } else {
@@ -16,16 +20,13 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
         isPyramidAttempt: json['isPyramidAttempt'],
       };
 
-      if (message.source?.nick && message.source?.nick === cache['lastUser']) {
-        if (
-          cache['lastMessages'].length ||
-          message.parameters.split(' ').length === 1
-        ) {
+      if (tags.username && tags.username === cache['lastUser']) {
+        if (cache['lastMessages'].length || message.split(' ').length === 1) {
           const first = cache['lastMessages'].length
             ? cache['lastMessages'][0]
-            : message.parameters;
+            : message;
           const temp = cache['lastMessages'];
-          temp.push(message.parameters);
+          temp.push(message);
           if (temp.length > 2) {
             const half = Math.ceil(temp.length / 2);
             const firstHalf: string[] = temp.slice(0, half);
@@ -34,8 +35,10 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
             let runningCheck = true;
             firstHalf.forEach((msg, i) => {
               if (i > 0 && runningCheck) {
-                const words = msg.split(' ');
-                const lastWords = firstHalf[i - 1].split(' ');
+                const words = msg.split(' ').map(s => s.trim());
+                const lastWords = firstHalf[i - 1]
+                  .split(' ')
+                  .map(s => s.trim());
                 runningCheck =
                   words.length - 1 === lastWords.length &&
                   words.every(w => w === first);
@@ -44,13 +47,10 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
 
             cache['isPyramidAttempt'] = runningCheck;
             if (cache['isPyramidAttempt']) {
-              if (
-                message.tags &&
-                message.tags['mod'] &&
-                message.tags['mod'] === '1'
-              ) {
-                connection.sendUTF(
-                  `PRIVMSG no mod pyramids @${message.source.nick} KEKG`
+              if (tags.mod) {
+                await client.say(
+                  channel,
+                  `no mod pyramids @${tags.username} KEKG`
                 );
                 cache['lastUser'] = null;
                 cache['lastMessages'] = [];
@@ -72,13 +72,11 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
                 });
 
                 if (runningCheck) {
-                  connection.sendUTF(
-                    `PRIVMSG Congrats to ${message.source.nick} for a ${
+                  await client.say(
+                    channel,
+                    `Congrats to ${tags.username} for a ${
                       temp[half].split(' ').length
-                    } high pyramid! pogg`,
-                    err => {
-                      console.log(err);
-                    }
+                    } high pyramid! pogg`
                   );
 
                   cache['lastUser'] = null;
@@ -90,28 +88,25 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
             }
           }
         }
-      } else if (message.source?.nick) {
+      } else if (tags.username) {
         if (cache['isPyramidAttempt']) {
-          connection.sendUTF(
-            // `PRIVMSG /timeout ${message.source.nick} 300 Failed pyramid`
-            `PRIVMSG @Bob69 Failed pyramid ${message.source.nick}`,
-            err => {
-              console.log(err);
-            }
-          );
-          connection.sendUTF(
-            `PRIVMSG @${message.source.nick} nife no failed pyramids allowed`,
-            err => {
-              console.log(err);
-            }
-          );
+          client
+            .say(
+              channel,
+              // `/timeout ${cache['lastUser']} 30 Failed pyramid`
+              `@Bob69 Failed pyramid @${cache['lastUser']}`
+            )
+            .then(async () => {
+              await client.say(
+                channel,
+                `@${cache['lastUser']} nife no failed pyramids allowed`
+              );
+            });
         }
-        cache['lastUser'] = message.source?.nick;
+        cache['lastUser'] = tags.username;
         cache['lastMessages'] = [];
-        cache['lastMessages'].push(message.parameters);
+        cache['lastMessages'].push(message);
         cache['isPyramidAttempt'] = false;
-
-        writeCache(cache);
       }
       writeCache(cache);
     }
@@ -119,11 +114,7 @@ const pyramidCheck = (message: ParsedMessage, connection: connection) => {
 };
 
 const writeCache = (cache: object) => {
-  fs.writeFile(FILENAME, JSON.stringify(cache), err => {
-    if (err) {
-      console.log('Error writing file', err);
-    }
-  });
+  fs.writeFileSync(FILENAME, JSON.stringify(cache));
 };
 export default pyramidCheck;
 export {pyramidCheck};
