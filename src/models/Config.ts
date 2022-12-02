@@ -5,15 +5,18 @@ dotenv.config({path: path.resolve(__dirname, '../../.env')});
 
 interface ENV {
   OAUTH: string | undefined;
+  DEBUG: boolean;
 }
 
 interface Config {
   OAUTH: string;
+  DEBUG: boolean;
 }
 
 const getConfig = (): ENV => {
   return {
     OAUTH: process.env.OAUTH,
+    DEBUG: process.env.DEBUG === 'true',
   };
 };
 
@@ -31,3 +34,4 @@ const config = getConfig();
 const sanitizedConfig = getSanitzedConfig(config);
 
 export default sanitizedConfig;
+export {sanitizedConfig};

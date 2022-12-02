@@ -1,36 +1,27 @@
 import {Client} from 'tmi.js';
-import * as fs from 'fs';
 import {pyramidCheck} from './scripts/pyramidCheck';
-import config from './models/Config';
+import {sanitizedConfig} from './models/Config';
+import {Cache} from './models/Cache';
 
 const main = () => {
-  fs.readFile('src/cache/cache-template.json', (err, jsonString) => {
-    if (err) {
-      console.log('File read failed:', err);
-    } else {
-      fs.writeFile('src/cache/cache.json', jsonString, err => {
-        if (err) {
-          console.log('Error writing file', err);
-        }
-      });
-    }
-  });
+  const config = sanitizedConfig;
+  let cache = new Cache();
   const client = new Client({
-    options: {debug: true},
+    options: {debug: config.DEBUG},
     identity: {
       username: 'barcode_chatbot',
       password: `oauth:${config.OAUTH}`,
     },
-    channels: ['dogdog'],
+    channels: ['barcode_chatbot'],
   });
 
   client.connect().catch(console.error);
 
-  client.on('message', (channel, tags, message, self) => {
+  client.on('message', async (channel, tags, message, self) => {
     // Ignore echoed messages.
     if (self) return;
 
-    pyramidCheck(channel, tags, message, client);
+    cache = await pyramidCheck(channel, tags, message, client, cache);
   });
 };
 
