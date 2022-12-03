@@ -10,9 +10,8 @@ WORKDIR /code
 COPY . .
 
 RUN npm i
-RUN npm prune --omit=dev
 RUN npm run build
-
+RUN npm prune --omit=dev
 RUN node-prune
 
 FROM node:current-alpine3.15

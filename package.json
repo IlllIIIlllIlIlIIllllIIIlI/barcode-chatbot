@@ -6,8 +6,8 @@
     "lint": "gts lint",
     "clean": "gts clean",
     "fix": "gts fix",
-    "build": "tsc",
-    "start": "tsc && node dist/index.js"
+    "build": "gulp",
+    "start": "gulp && node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,11 +20,16 @@
   },
   "homepage": "https://github.com/itsgreylolol/barcode-chatbot#readme",
   "dependencies": {
+    "dotenv": "^16.0.3",
+    "tmi.js": "^1.8.5"
+  },
+  "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/node": "^14.11.2",
     "@types/tmi.js": "^1.8.2",
-    "dotenv": "^16.0.3",
     "gts": "^3.1.1",
-    "tmi.js": "^1.8.5"
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify": "^3.0.2"
   }
 }
