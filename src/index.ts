@@ -12,7 +12,7 @@ const main = () => {
       username: 'barcode_chatbot',
       password: `oauth:${config.OAUTH}`,
     },
-    channels: ['barcode_chatbot'],
+    channels: ['dogdog'],
   });
 
   client.connect().catch(console.error);
