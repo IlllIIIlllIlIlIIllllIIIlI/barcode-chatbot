@@ -6,5 +6,5 @@
     "esModuleInterop": true,
     "typeRoots": ["./global.d.ts", "./node_modules/@types"]
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*.ts"]
 }

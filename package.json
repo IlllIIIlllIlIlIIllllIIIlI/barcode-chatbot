@@ -37,6 +37,7 @@
     "gts": "^3.1.1",
     "gulp": "^4.0.2",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-uglify": "^3.0.2"
+    "gulp-uglify": "^3.0.2",
+    "npm-force-resolutions": "^0.0.10"
   }
 }
