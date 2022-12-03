@@ -6,6 +6,7 @@
     "lint": "gts lint",
     "clean": "gts clean",
     "fix": "gts fix",
+    "build": "tsc",
     "start": "tsc && node dist/index.js"
   },
   "repository": {
@@ -18,13 +19,12 @@
     "url": "https://github.com/itsgreylolol/barcode-chatbot/issues"
   },
   "homepage": "https://github.com/itsgreylolol/barcode-chatbot#readme",
-  "devDependencies": {
+  "dependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/node": "^14.11.2",
     "@types/tmi.js": "^1.8.2",
     "dotenv": "^16.0.3",
     "gts": "^3.1.1",
-    "tmi.js": "^1.8.5",
-    "typescript": "^4.4.0"
+    "tmi.js": "^1.8.5"
   }
 }
