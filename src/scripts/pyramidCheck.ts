@@ -1,23 +1,17 @@
-import {ChatUserstate, Client} from 'tmi.js';
 import {Cache} from '../models/Cache';
+import {Client} from '../models/Client';
+import {Message} from '../models/Message';
 
-const pyramidCheck = async (
-  channel: string,
-  tags: ChatUserstate,
-  message: string,
-  client: Client,
-  cache: Cache
-) => {
-  // Handle server messages
-  if (!tags.username) return cache;
+const pyramidCheck = (message: Message) => {
+  const cache = Cache.Instance;
 
   // Check for repeated messages
-  if (tags.username === cache.lastUser) {
+  if (message.tags.username === cache.lastUser) {
     // We only care if their message is 1 word, i.e. emote
     // So if we have already pushed an emote into lastMessages
     // or if this message is 1 word, we continue
-    if (cache.lastMessages.length || message.split(' ').length === 1) {
-      cache.lastMessages.push(message.trim());
+    if (cache.lastMessages.length || message.message.split(' ').length === 1) {
+      cache.lastMessages.push(message.message.trim());
       const first = cache.lastMessages[0].trim();
 
       // Arbitrary rule that failed pyramids have to reach their peak
@@ -40,9 +34,14 @@ const pyramidCheck = async (
         // If we have stairs, we always want to know an attempt is being made
         cache.isPyramidAttempt = runningCheck;
         if (cache.isPyramidAttempt) {
-          if (tags.mod) {
+          if (message.tags.mod) {
             // KEKG Blankedx
-            await client.say(channel, `no mod pyramids @${tags.username} KEKG`);
+            Client.Instance.client
+              .say(
+                message.channel,
+                `no mod pyramids @${message.tags.username} KEKG`
+              )
+              .catch(console.error);
             cache.lastUser = null;
             cache.lastMessages = [];
             cache.isPyramidAttempt = false;
@@ -59,24 +58,26 @@ const pyramidCheck = async (
               }
             }
             if (isSymmetric) {
-              await client.say(
-                channel,
-                `Congrats to ${tags.username} for a ${
-                  firstHalf[firstHalf.length - 1].split(' ').length
-                } high pyramid! pogg`
-              );
+              Client.Instance.client
+                .say(
+                  message.channel,
+                  `Congrats to ${message.tags.username} for a ${
+                    firstHalf[firstHalf.length - 1].split(' ').length
+                  } high pyramid! pogg`
+                )
+                .catch(console.error);
 
               cache.lastUser = null;
               cache.lastMessages = [];
               cache.isPyramidAttempt = false;
             }
           }
-        } else if (message.split(' ').length === 1) {
+        } else if (message.message.split(' ').length === 1) {
           // No pyramid, but they still sent a single word
           // So we need to save it in cache in case they start one
-          cache.lastUser = tags.username;
+          cache.lastUser = message.tags.username;
           cache.lastMessages = [];
-          cache.lastMessages.push(message.trim());
+          cache.lastMessages.push(message.message.trim());
           cache.isPyramidAttempt = false;
         } else {
           cache.lastUser = null;
@@ -90,15 +91,15 @@ const pyramidCheck = async (
     // And the cached user was attempting a pyramid
     // /timeout
     if (cache.isPyramidAttempt) {
-      await client.say(channel, `@Bob69 Failed pyramid @${cache.lastUser}`);
+      Client.Instance.client
+        .say(message.channel, `@Bob69 Failed pyramid @${cache.lastUser}`)
+        .catch(console.error);
     }
-    cache.lastUser = tags.username;
+    cache.lastUser = message.tags.username ?? null;
     cache.lastMessages = [];
-    cache.lastMessages.push(message.trim());
+    cache.lastMessages.push(message.message.trim());
     cache.isPyramidAttempt = false;
   }
-
-  return cache;
 };
 
 export default pyramidCheck;

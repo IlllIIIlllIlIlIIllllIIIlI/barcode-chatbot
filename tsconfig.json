@@ -4,6 +4,11 @@
     "rootDir": "src",
     "outDir": "dist",
     "esModuleInterop": true,
+    "target": "es6",
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "pretty": false,
+    "declaration": false,
     "typeRoots": ["./global.d.ts", "./node_modules/@types"]
   },
   "include": ["src/**/*.ts"]

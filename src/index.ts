@@ -1,27 +1,25 @@
-import {Client} from 'tmi.js';
 import {pyramidCheck} from './scripts/pyramidCheck';
-import {sanitizedConfig} from './models/Config';
-import {Cache} from './models/Cache';
+import {Client} from './models/Client';
+import {EventBus} from './models/EventBus';
+import {Message} from './models/Message';
+
+const _initBus = () => {
+  const bus = new EventBus<Message>();
+  bus.listen(m => !!m.tags.username, pyramidCheck);
+
+  return bus;
+};
 
 const main = () => {
-  const config = sanitizedConfig;
-  let cache = new Cache();
-  const client = new Client({
-    options: {debug: config.DEBUG},
-    identity: {
-      username: 'barcode_chatbot',
-      password: `oauth:${config.OAUTH}`,
-    },
-    channels: ['dogdog'],
-  });
+  const bus = _initBus();
 
-  client.connect().catch(console.error);
-
-  client.on('message', async (channel, tags, message, self) => {
+  Client.Instance.client.connect().catch(console.error);
+  Client.Instance.client.on('message', (channel, tags, message, self) => {
     // Ignore echoed messages.
     if (self) return;
 
-    cache = await pyramidCheck(channel, tags, message, client, cache);
+    const msg = new Message(channel, message, tags);
+    bus.trigger(msg);
   });
 };
 

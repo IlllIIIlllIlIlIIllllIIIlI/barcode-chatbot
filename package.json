@@ -2,6 +2,7 @@
   "name": "barcode-chatbot",
   "version": "1.0.0",
   "description": "Twitch Chatbot",
+  "private": true,
   "scripts": {
     "lint": "gts lint",
     "clean": "gts clean",
@@ -28,16 +29,17 @@
   "homepage": "https://github.com/itsgreylolol/barcode-chatbot#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "rxjs": "^7.6.0",
     "tmi.js": "^1.8.5"
   },
   "devDependencies": {
-    "@types/node": "^14.11.2",
+    "@types/node": "^18.11.10",
     "@types/tmi.js": "^1.8.2",
     "glob-parent": "6.0.2",
     "gts": "^3.1.1",
     "gulp": "^4.0.2",
+    "gulp-terser": "^2.1.0",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-uglify": "^3.0.2",
     "npm-force-resolutions": "^0.0.10"
   }
 }

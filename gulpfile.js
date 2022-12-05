@@ -1,11 +1,13 @@
-var gulp = require('gulp');
+const gulp = require('gulp');
 const ts = require('gulp-typescript');
-const uglify = require('gulp-uglify');
+const terser = require('gulp-terser');
+
+const tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('default', () => {
   return gulp
     .src('src/**/*.ts')
-    .pipe(ts())
-    .pipe(uglify())
+    .pipe(tsProject())
+    .pipe(terser())
     .pipe(gulp.dest('dist'));
 });
