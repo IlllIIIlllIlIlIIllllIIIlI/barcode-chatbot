@@ -23,12 +23,11 @@ export class Message {
       this.isCommand && this.tags.username
         ? this.messageArr[0].replace('!', '')
         : null;
-    this.isAdmin = !!(
+    this.isAdmin =
       this.isCommand &&
       this.command === 'bar' &&
       this.messageArr.length > 1 &&
-      this.tags.mod &&
-      this.adminCommands.includes(this.messageArr[1])
-    );
+      !!this.tags.mod &&
+      this.adminCommands.includes(this.messageArr[1]);
   }
 }
