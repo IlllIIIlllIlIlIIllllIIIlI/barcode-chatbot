@@ -10,7 +10,7 @@ export class Client {
     this.client = new TClient({
       options: {debug: config.DEBUG},
       identity: {
-        username: 'barcode_chatbot',
+        username: config.USERNAME,
         password: `oauth:${config.OAUTH}`,
       },
       channels: ['dogdog'],

@@ -6,3 +6,4 @@ services:
     environment:
       - OAUTH=${OAUTH}
       - DEBUG=${DEBUG}
+      - USERNAME=${USERNAME}
