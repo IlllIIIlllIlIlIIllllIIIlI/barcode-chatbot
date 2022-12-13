@@ -1,3 +1,5 @@
+import {Message} from './Message';
+
 export class Cache {
   lastUser: string | null;
   lastMessages: string[];
@@ -14,4 +16,17 @@ export class Cache {
   public static get Instance() {
     return this._instance || (this._instance = new this());
   }
+
+  static Clear = () => {
+    this.Instance.lastUser = null;
+    this.Instance.lastMessages = [];
+    this.Instance.isPyramidAttempt = false;
+  };
+
+  static Reset = (message: Message) => {
+    this.Instance.lastUser = message.tags.username ?? null;
+    this.Instance.lastMessages = [];
+    this.Instance.lastMessages.push(message.message.trim());
+    this.Instance.isPyramidAttempt = false;
+  };
 }

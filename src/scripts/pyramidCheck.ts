@@ -1,6 +1,7 @@
 import {Cache} from '../models/Cache';
 import {Client} from '../models/Client';
 import {Message} from '../models/Message';
+import {Logger} from '../models/Logger';
 
 const pyramidCheck = (message: Message) => {
   const cache = Cache.Instance;
@@ -41,10 +42,9 @@ const pyramidCheck = (message: Message) => {
                 message.channel,
                 `no mod pyramids @${message.tags.username} KEKG`
               )
-              .catch(console.error);
-            cache.lastUser = null;
-            cache.lastMessages = [];
-            cache.isPyramidAttempt = false;
+              .catch(Logger.Instance.Error)
+              .then(() => Logger.Instance.Info(Cache.Instance))
+              .finally(() => Cache.Clear());
           } else {
             // Check back half for complete pyramid
             let isSymmetric = true;
@@ -65,24 +65,17 @@ const pyramidCheck = (message: Message) => {
                     firstHalf[firstHalf.length - 1].split(' ').length
                   } high pyramid! pogg`
                 )
-                .catch(console.error);
-
-              cache.lastUser = null;
-              cache.lastMessages = [];
-              cache.isPyramidAttempt = false;
+                .catch(Logger.Instance.Error)
+                .then(() => Logger.Instance.Info(Cache.Instance))
+                .finally(() => Cache.Clear());
             }
           }
         } else if (message.message.split(' ').length === 1) {
           // No pyramid, but they still sent a single word
           // So we need to save it in cache in case they start one
-          cache.lastUser = message.tags.username;
-          cache.lastMessages = [];
-          cache.lastMessages.push(message.message.trim());
-          cache.isPyramidAttempt = false;
+          Cache.Reset(message);
         } else {
-          cache.lastUser = null;
-          cache.lastMessages = [];
-          cache.isPyramidAttempt = false;
+          Cache.Clear();
         }
       }
     }
@@ -93,12 +86,12 @@ const pyramidCheck = (message: Message) => {
     if (cache.isPyramidAttempt) {
       Client.Instance.client
         .say(message.channel, `@Bob69 Failed pyramid @${cache.lastUser}`)
-        .catch(console.error);
+        .catch(Logger.Instance.Error)
+        .then(() => Logger.Instance.Info(Cache.Instance))
+        .finally(() => Cache.Reset(message));
+    } else {
+      Cache.Reset(message);
     }
-    cache.lastUser = message.tags.username ?? null;
-    cache.lastMessages = [];
-    cache.lastMessages.push(message.message.trim());
-    cache.isPyramidAttempt = false;
   }
 };
 

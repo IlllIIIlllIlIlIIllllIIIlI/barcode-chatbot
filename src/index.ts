@@ -2,6 +2,7 @@ import {pyramidCheck} from './scripts/pyramidCheck';
 import {Client} from './models/Client';
 import {EventBus} from './models/EventBus';
 import {Message} from './models/Message';
+import {Logger} from './models/Logger';
 import {handleCommands, handleAdminCommands} from './scripts/commandHandler';
 
 const _initBus = () => {
@@ -16,7 +17,7 @@ const _initBus = () => {
 const main = () => {
   const bus = _initBus();
 
-  Client.Instance.client.connect().catch(console.error);
+  Client.Instance.client.connect().catch(Logger.Instance.Error);
   Client.Instance.client.on('message', (channel, tags, message, self) => {
     // Ignore echoed messages.
     if (self) return;
