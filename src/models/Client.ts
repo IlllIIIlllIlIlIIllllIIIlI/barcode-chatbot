@@ -13,7 +13,7 @@ export class Client {
         username: config.USERNAME,
         password: `oauth:${config.OAUTH}`,
       },
-      channels: ['barcode_chatbot', 'dogdog'],
+      channels: ['dogdog'],
     });
   }
 

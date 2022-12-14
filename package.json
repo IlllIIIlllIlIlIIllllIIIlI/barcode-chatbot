@@ -8,7 +8,7 @@
     "clean": "gts clean",
     "fix": "gts fix",
     "build": "gulp",
-    "start": "gulp && node dist/index.js",
+    "generate": "npx prisma generate",
     "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
   },
   "resolutions": {
@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/itsgreylolol/barcode-chatbot#readme",
   "dependencies": {
+    "@prisma/client": "^4.7.1",
     "dotenv": "^16.0.3",
     "rxjs": "^7.6.0",
     "tmi.js": "^1.8.5"

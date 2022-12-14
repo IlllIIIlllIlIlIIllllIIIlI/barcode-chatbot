@@ -25,7 +25,7 @@ export class Message {
         : null;
     this.isAdmin =
       this.isCommand &&
-      this.command === 'bar' &&
+      this.command === 'barbot' &&
       this.messageArr.length > 1 &&
       !!this.tags.mod &&
       this.adminCommands.includes(this.messageArr[1]);
