@@ -10,6 +10,7 @@ WORKDIR /code
 COPY . .
 
 RUN npm i
+RUN npm audit fix
 RUN npm run build
 RUN npm prune --omit=dev
 RUN node-prune

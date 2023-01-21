@@ -1,5 +1,5 @@
 import {Client as TClient} from 'tmi.js';
-import {sanitizedConfig} from './Config';
+import {sanitizedConfig} from '.';
 
 export class Client {
   client: TClient;
@@ -13,7 +13,7 @@ export class Client {
         username: config.USERNAME,
         password: `oauth:${config.OAUTH}`,
       },
-      channels: ['dogdog'],
+      channels: config.CHANNELS,
     });
   }
 

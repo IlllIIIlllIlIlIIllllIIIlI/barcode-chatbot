@@ -1,17 +1,16 @@
 datasource db {
-    provider = "sqlserver"
-    url      = env("DATABASE_URL")
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Chatter {
-    id                 Int      @id @default(autoincrement())
-    username           String   @unique
-    failedPyramids     Int
-    successfulPyramids Int
-    createdOn          DateTime @default(now())
-    modifiedOn         DateTime @updatedAt
+  username           String   @id @unique
+  failedPyramids     Int
+  successfulPyramids Int
+  createdOn          DateTime @default(now())
+  modifiedOn         DateTime @updatedAt
 }

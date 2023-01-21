@@ -1,6 +1,6 @@
 import {writeFileSync, mkdirSync, existsSync} from 'fs';
 import {join} from 'path';
-import {EventBus} from './EventBus';
+import {EventBus} from '.';
 
 export class Logger extends EventBus<object> {
   private static _instance: Logger;
@@ -14,7 +14,7 @@ export class Logger extends EventBus<object> {
     }
   }
 
-  public static get Instance() {
+  static get Instance() {
     return this._instance || (this._instance = new this());
   }
 
@@ -34,7 +34,7 @@ export class Logger extends EventBus<object> {
     return result;
   };
 
-  Error = (data: string | object) => this._log('error', data);
-  Chat = (data: string | object) => this._log('chat', data);
-  Info = (data: string | object) => this._log('info', data);
+  static Error = (data: string | object) => this.Instance._log('error', data);
+  static Chat = (data: string | object) => this.Instance._log('chat', data);
+  static Info = (data: string | object) => this.Instance._log('info', data);
 }

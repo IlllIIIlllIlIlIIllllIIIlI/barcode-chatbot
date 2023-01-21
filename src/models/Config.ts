@@ -7,12 +7,14 @@ interface ENV {
   OAUTH: string | undefined;
   DEBUG: boolean;
   USERNAME: string | undefined;
+  CHANNELS: string[] | undefined;
 }
 
 interface Config {
   OAUTH: string;
   DEBUG: boolean;
   USERNAME: string;
+  CHANNELS: string[];
 }
 
 const getConfig = (): ENV => {
@@ -20,6 +22,7 @@ const getConfig = (): ENV => {
     OAUTH: process.env.OAUTH,
     DEBUG: process.env.DEBUG === 'true',
     USERNAME: process.env.USERNAME,
+    CHANNELS: process.env.CHANNELS?.split(';'),
   };
 };
 

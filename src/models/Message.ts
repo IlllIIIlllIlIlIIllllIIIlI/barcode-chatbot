@@ -1,33 +1,40 @@
 import {ChatUserstate} from 'tmi.js';
 
 export class Message {
-  private adminCommands = ['add', 'remove', 'stop', 'start'];
+  private adminCommands = ['leaderboard', 'reset'];
+  private bots = ['robonito', 'streamelements'];
+  private powerUsers = ['illliiilllililiilllliiili'];
 
   channel: string;
   message: string;
   tags: ChatUserstate;
 
-  messageArr: string[];
   isCommand;
   command: string | null;
   isAdmin;
+  isBot;
 
   constructor(channel: string, message: string, tags: ChatUserstate) {
     this.channel = channel;
-    this.message = message;
+    this.message = message.trim();
     this.tags = tags;
 
-    this.messageArr = message.split(' ').map(s => s.trim());
-    this.isCommand = this.messageArr[0][0] === '!';
+    this.isBot =
+      this.tags.username &&
+      this.bots.includes(this.tags.username.toLowerCase());
+
+    this.isCommand = !this.isBot && this.message[0] === '!';
+
     this.command =
       this.isCommand && this.tags.username
-        ? this.messageArr[0].replace('!', '')
+        ? this.message.replace('!', '')
         : null;
+
     this.isAdmin =
-      this.isCommand &&
-      this.command === 'barbot' &&
-      this.messageArr.length > 1 &&
-      !!this.tags.mod &&
-      this.adminCommands.includes(this.messageArr[1]);
+      !!this.command &&
+      !!this.tags.username &&
+      (!!this.tags.mod ||
+        this.powerUsers.includes(this.tags.username.toLowerCase())) &&
+      this.adminCommands.includes(this.command);
   }
 }
