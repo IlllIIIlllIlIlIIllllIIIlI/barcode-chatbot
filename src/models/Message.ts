@@ -1,4 +1,5 @@
 import {ChatUserstate} from 'tmi.js';
+import {Logger} from '.';
 
 export class Message {
   private adminCommands = ['leaderboard', 'reset'];
@@ -36,5 +37,10 @@ export class Message {
       (!!this.tags.mod ||
         this.powerUsers.includes(this.tags.username.toLowerCase())) &&
       this.adminCommands.includes(this.command);
+
+    if (!this.tags.username) {
+      Logger.Info(this.tags);
+      Logger.Info(this.message);
+    }
   }
 }
