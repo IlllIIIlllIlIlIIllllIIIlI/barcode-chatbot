@@ -4,7 +4,7 @@ import {saveAndLoadChatters} from '../scripts';
 export const handleCommands = (message: Message) => {};
 export const handleAdminCommands = (message: Message) => {
   switch (message.command?.split(' ')[0]) {
-    case 'leaderboard':
+    case 'pyramids':
       leaderboard(message.channel);
       break;
     case 'reset':
@@ -36,17 +36,10 @@ const leaderboard = (channel: string) => {
     .reverse()
     .slice(0, 10);
 
-  Client.Instance.client
-    .say(channel, 'Top Pyramid Creators')
-    .catch(Logger.Error)
-    .then(() => {
-      topChatters.forEach(async (c, i) => {
-        await Client.Instance.client
-          .say(
-            channel,
-            `#${i + 1} - ${c.username}: ${c.totalSuccessfulPyrmaids}`
-          )
-          .catch(Logger.Error);
-      });
-    });
+  let msg = 'Top Pyramid Creators: ';
+  topChatters.forEach((c, i) => {
+    msg += `|| #${i + 1}: ${c.username} - ${c.totalSuccessfulPyrmaids} `;
+  });
+
+  Client.Instance.client.say(channel, msg).catch(Logger.Error);
 };

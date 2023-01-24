@@ -9,10 +9,7 @@ import {
 const _initBus = () => {
   const bus = new EventBus<Message>();
 
-  bus.listen(
-    m => !m.isBot && !!m.tags.username && !m.isCommand,
-    handlePyramids
-  );
+  bus.listen(m => !!m.tags.username && !m.isCommand, handlePyramids);
   bus.listen(m => m.isCommand && !m.isAdmin, handleCommands);
   bus.listen(m => m.isAdmin, handleAdminCommands);
 
@@ -25,7 +22,7 @@ const main = async () => {
 
   setInterval(async () => {
     await saveAndLoadChatters();
-  }, 360000);
+  }, 3600000);
 
   Client.Instance.client.connect().catch(Logger.Error);
   Client.Instance.client.on('message', (channel, tags, message, self) => {

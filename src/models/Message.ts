@@ -2,7 +2,7 @@ import {ChatUserstate} from 'tmi.js';
 import {Logger} from '.';
 
 export class Message {
-  private adminCommands = ['leaderboard', 'reset'];
+  private adminCommands = ['reset'];
   private bots = ['robonito', 'streamelements'];
   private powerUsers = ['illliiilllililiilllliiili'];
 

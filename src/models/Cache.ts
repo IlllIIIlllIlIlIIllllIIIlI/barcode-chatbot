@@ -52,10 +52,7 @@ export class Cache {
             successfulPyramids: c.totalSuccessfulPyrmaids,
           },
         })
-        .catch(Logger.Error)
-        .then(() => {
-          Logger.Info('Chatters saved!');
-        });
+        .catch(Logger.Error);
     });
   };
 }

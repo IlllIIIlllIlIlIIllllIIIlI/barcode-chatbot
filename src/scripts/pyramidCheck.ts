@@ -1,9 +1,10 @@
 import {Cache, Client, Message, Logger, DailyChatter} from '../models';
+import {isLive} from './misc';
 
 const handlePyramids = (message: Message) => {
   chatCheck(message)
     .catch(Logger.Error)
-    .then(() => {
+    .then(async () => {
       let chatter = Cache.Instance.chatters.find(
         c => c.username === message.tags.username
       );
@@ -11,34 +12,35 @@ const handlePyramids = (message: Message) => {
         chatter = new DailyChatter(undefined, message.tags.username);
         Cache.Instance.chatters.push(chatter);
       }
-      if (chatter.lastMessages.length > 9) {
-        chatter.lastMessages.pop();
-      }
 
       chatter.lastMessages.push(message.message);
-      userCheck(chatter, message.channel);
-    })
-    .catch(Logger.Error);
+      await userCheck(chatter, message.channel).catch(Logger.Error);
+    });
 };
 
 const chatCheck = async (message: Message) => {
-  if (Cache.Instance.lastMessages.length > 9) {
-    Cache.Instance.lastMessages.pop();
+  if (
+    Cache.Instance.lastMessages.length ||
+    message.message.split(' ').length === 1
+  ) {
+    Cache.Instance.lastMessages.push(message);
+    Cache.Instance.isPyramidAttempt = firstCheck(
+      Cache.Instance.lastMessages.map(m => m.message)
+    );
   }
-
-  Cache.Instance.lastMessages.push(message);
-  Cache.Instance.isPyramidAttempt = firstCheck(
-    Cache.Instance.lastMessages.map(m => m.message)
-  );
 };
 
-const userCheck = (chatter: DailyChatter, channel: string) => {
+const userCheck = async (chatter: DailyChatter, channel: string) => {
   if (!Cache.Instance.lastChatter) {
     Cache.Instance.lastChatter = chatter;
   }
   const lastChatter = Cache.Instance.lastChatter;
 
-  if (lastChatter.attemptingPyramid && lastChatter.lastMessages.length > 2) {
+  if (
+    lastChatter.attemptingPyramid &&
+    lastChatter.lastMessages.length > 2 &&
+    (await isLive(channel))
+  ) {
     if (
       chatter.username !== lastChatter.username &&
       !Cache.Instance.isPyramidAttempt
@@ -48,7 +50,7 @@ const userCheck = (chatter: DailyChatter, channel: string) => {
       Client.Instance.client
         .say(
           channel,
-          `Bob69 Failed pyramid @${lastChatter.username} \n They have failed ${lastChatter.dailyFailedPyramids} today!`
+          `Bob69 Failed pyramid @${lastChatter.username} They have failed ${lastChatter.dailyFailedPyramids} today!`
         )
         .catch(Logger.Error)
         .finally(() => {
@@ -57,25 +59,28 @@ const userCheck = (chatter: DailyChatter, channel: string) => {
 
           Cache.Instance.lastMessages = [];
         });
-    } else {
-      if (secondCheck(lastChatter.lastMessages)) {
-        lastChatter.dailySuccessfulPyramids++;
-        lastChatter.totalSuccessfulPyrmaids++;
-        Client.Instance.client
-          .say(
-            channel,
-            `Congrats to ${lastChatter.username} for a ${lastChatter.lastMessages[0]} pyramid! \n They have completed ${lastChatter.totalSuccessfulPyrmaids} all-time!`
-          )
-          .catch(Logger.Error)
-          .finally(() => {
-            lastChatter.lastMessages = [];
-            lastChatter.attemptingPyramid = false;
+    } else if (secondCheck(lastChatter.lastMessages)) {
+      lastChatter.dailySuccessfulPyramids++;
+      lastChatter.totalSuccessfulPyrmaids++;
 
-            Cache.Instance.lastMessages = [];
-            Cache.Instance.isPyramidAttempt = false;
-          });
-      }
+      Client.Instance.client
+        .say(
+          channel,
+          `Congrats to ${lastChatter.username} for a ${lastChatter.lastMessages[0]} pyramid! They have completed ${lastChatter.totalSuccessfulPyrmaids} all-time!`
+        )
+        .catch(Logger.Error)
+        .finally(() => {
+          lastChatter.lastMessages = [];
+          lastChatter.attemptingPyramid = false;
+
+          Cache.Instance.lastMessages = [];
+          Cache.Instance.isPyramidAttempt = false;
+        });
     }
+  }
+
+  if (!Cache.Instance.isPyramidAttempt) {
+    Cache.Instance.lastMessages = [];
   }
 
   chatter.attemptingPyramid = firstCheck(chatter.lastMessages);
