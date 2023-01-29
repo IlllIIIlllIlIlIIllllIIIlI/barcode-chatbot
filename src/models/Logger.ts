@@ -18,7 +18,7 @@ export class Logger extends EventBus<object> {
     return this._instance || (this._instance = new this());
   }
 
-  private _log = (filename: string, data: string | object) => {
+  private _log = (filename: string, data: string | object | unknown) => {
     const path = join(this._path, `${filename}.txt`);
 
     writeFileSync(path, this._format(data), {
@@ -26,7 +26,7 @@ export class Logger extends EventBus<object> {
     });
   };
 
-  private _format = (data: string | object) => {
+  private _format = (data: string | object | unknown) => {
     const content =
       typeof data === 'string' ? data : JSON.stringify(data, null, 4);
     const result = `------------------------------------------------- \n
@@ -34,7 +34,12 @@ export class Logger extends EventBus<object> {
     return result;
   };
 
-  static Error = (data: string | object) => this.Instance._log('error', data);
-  static Chat = (data: string | object) => this.Instance._log('chat', data);
-  static Info = (data: string | object) => this.Instance._log('info', data);
+  static Error = (data: string | object | unknown) =>
+    this.Instance._log('error', data);
+  static Chat = (data: string | object | unknown) =>
+    this.Instance._log('chat', data);
+  static Info = (data: string | object | unknown) =>
+    this.Instance._log('info', data);
+  static Debug = (data: string | object | unknown) =>
+    this.Instance._log('debug', data);
 }

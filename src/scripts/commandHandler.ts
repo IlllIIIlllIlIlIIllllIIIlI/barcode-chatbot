@@ -1,27 +1,27 @@
-import {Message, Client, Cache, Logger} from '../models';
-import {saveAndLoadChatters} from '../scripts';
+import {Message, Cache, Logger} from '../models';
+import {saveAndLoadChatters, say} from '../scripts';
 
 export const handleCommands = (message: Message) => {};
-export const handleAdminCommands = (message: Message) => {
+
+export const handleAdminCommands = async (message: Message) => {
   switch (message.command?.split(' ')[0]) {
     case 'pyramids':
-      leaderboard(message.channel);
+      await leaderboard(message.channel);
       break;
     case 'reset':
-      saveAndLoadChatters(true).then(async () => {
-        await Client.Instance.client
-          .say(message.channel, 'Daily stats reset!')
-          .catch(Logger.Error);
-      });
+      await saveAndLoadChatters(true);
+      await say(message.channel, 'Daily stats reset!');
+      break;
+    case 'log':
+      Cache.Log();
+      await say(message.channel, 'Chat logged!');
       break;
     default:
-      Client.Instance.client
-        .say(message.channel, 'Command not implemented yet, sorry!')
-        .catch(Logger.Error);
+      await say(message.channel, 'Command not implemented yet, sorry!');
   }
 };
 
-const leaderboard = (channel: string) => {
+const leaderboard = async (channel: string) => {
   const topChatters = Cache.Instance.chatters
     .filter(c => c.totalSuccessfulPyrmaids > 0)
     .sort((a, b) =>
@@ -41,5 +41,5 @@ const leaderboard = (channel: string) => {
     msg += `|| #${i + 1}: ${c.username} - ${c.totalSuccessfulPyrmaids} `;
   });
 
-  Client.Instance.client.say(channel, msg).catch(Logger.Error);
+  await say(channel, msg).catch(Logger.Error);
 };

@@ -1,11 +1,11 @@
 import {ChatUserstate} from 'tmi.js';
-import {Logger} from '.';
+
+const adminCommands = ['reset', 'log'];
+const bots = ['robonito', 'streamelements'];
+const powerUsers = ['illliiilllililiilllliiili'];
+const regex = /[^\x00-\x7F]/g;
 
 export class Message {
-  private adminCommands = ['reset'];
-  private bots = ['robonito', 'streamelements'];
-  private powerUsers = ['illliiilllililiilllliiili'];
-
   channel: string;
   message: string;
   tags: ChatUserstate;
@@ -17,12 +17,11 @@ export class Message {
 
   constructor(channel: string, message: string, tags: ChatUserstate) {
     this.channel = channel;
-    this.message = message.trim();
+    this.message = message.replace(regex, '').trim();
     this.tags = tags;
 
     this.isBot =
-      this.tags.username &&
-      this.bots.includes(this.tags.username.toLowerCase());
+      this.tags.username && bots.includes(this.tags.username.toLowerCase());
 
     this.isCommand = !this.isBot && this.message[0] === '!';
 
@@ -35,12 +34,7 @@ export class Message {
       !!this.command &&
       !!this.tags.username &&
       (!!this.tags.mod ||
-        this.powerUsers.includes(this.tags.username.toLowerCase())) &&
-      this.adminCommands.includes(this.command);
-
-    if (!this.tags.username) {
-      Logger.Info(this.tags);
-      Logger.Info(this.message);
-    }
+        powerUsers.includes(this.tags.username.toLowerCase())) &&
+      adminCommands.includes(this.command);
   }
 }

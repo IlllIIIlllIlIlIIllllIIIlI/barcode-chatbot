@@ -1,7 +1,7 @@
 import {Chatter} from '@prisma/client';
 
 export class DailyChatter {
-  username: string = "";
+  username: string = '';
   lastMessages: string[];
   totalFailedPyramids: number = 0;
   totalSuccessfulPyrmaids: number = 0;
