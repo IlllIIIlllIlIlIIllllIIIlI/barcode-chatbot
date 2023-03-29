@@ -1,6 +1,6 @@
 import {ChatUserstate} from 'tmi.js';
 
-const adminCommands = ['reset', 'log'];
+const adminCommands: string[] = [];
 const bots = ['robonito', 'streamelements'];
 const powerUsers = ['illliiilllililiilllliiili'];
 const regex = /[^\x00-\x7F]/g;
@@ -27,7 +27,7 @@ export class Message {
 
     this.command =
       this.isCommand && this.tags.username
-        ? this.message.replace('!', '')
+        ? this.message.split(' ')[0].replace('!', '').toLowerCase()
         : null;
 
     this.isAdmin =

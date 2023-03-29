@@ -1,32 +1,37 @@
-import fetch from 'node-fetch';
-import {Cache, Client, Logger} from '../models/';
+import {handleAdminCommands, handleCommands} from '.';
+import {Client, EventBus, Logger, Message, sanitizedConfig} from '../models/';
 
-export const saveAndLoadChatters = async (load: boolean = false) => {
-  await Cache.Save();
-  if (new Date().getHours() === 0 || load) {
-    await Cache.Load();
-  }
-};
+export const initBus = () => {
+  const bus = new EventBus<Message>();
 
-export const isLive = async (channel: string) => {
-  try {
-    let text = '';
-    const response = await fetch(
-      `https://www.twitch.tv/${channel.replace('#', '')}`
-    ).catch(Logger.Error);
-    if (response) {
-      text = await response.text();
-      const status = response.status;
-      const sText = response.statusText;
-      Logger.Debug({status, sText});
-    }
-    return text.includes('isLiveBroadcast');
-  } catch (error) {
-    Logger.Error(error);
-    return true;
-  }
+  bus.listen(m => m.message.includes(sanitizedConfig.USERNAME), Logger.Chat);
+  bus.listen(m => m.isCommand && !m.isAdmin, handleCommands);
+  bus.listen(m => m.isAdmin, handleAdminCommands);
+
+  return bus;
 };
 
 export const say = async (channel: string, message: string) => {
   await Client.Instance.client.say(channel, message).catch(Logger.Error);
+};
+
+export const cleanString = (s: string, slice?: number) => {
+  if (slice !== undefined) {
+    return s
+      .toLowerCase()
+      .split(' ')
+      .filter(s => !!s.length && s !== 'the')
+      .map(s => s.replace(/\s+/g, ' ').trim())
+      .slice(slice)
+      .join(' ')
+      .trim();
+  }
+
+  return s
+    .toLowerCase()
+    .split(' ')
+    .filter(s => !!s.length && s !== 'the')
+    .map(s => s.replace(/\s+/g, ' ').trim())
+    .join(' ')
+    .trim();
 };

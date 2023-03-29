@@ -1,45 +1,86 @@
-import {Message, Cache, Logger} from '../models';
-import {saveAndLoadChatters, say} from '../scripts';
+import {Buddy, Message} from '../models';
+import {say, cleanString} from '../scripts';
+import PublicGoogleSheetsParser from 'public-google-sheets-parser';
 
-export const handleCommands = (message: Message) => {};
-
-export const handleAdminCommands = async (message: Message) => {
-  switch (message.command?.split(' ')[0]) {
-    case 'pyramids':
-      await leaderboard(message.channel);
+export const handleCommands = async (message: Message) => {
+  switch (message.command) {
+    case 'buddy':
+      await getBuddy(message, '485160647');
       break;
-    case 'reset':
-      await saveAndLoadChatters(true);
-      await say(message.channel, 'Daily stats reset!');
+    case 'gbuddy':
+    case 'goldenbuddy':
+      await getBuddy(message, '802395848', true);
       break;
-    case 'log':
-      Cache.Log();
-      await say(message.channel, 'Chat logged!');
-      break;
-    default:
-      await say(message.channel, 'Command not implemented yet, sorry!');
   }
 };
 
-const leaderboard = async (channel: string) => {
-  const topChatters = Cache.Instance.chatters
-    .filter(c => c.totalSuccessfulPyrmaids > 0)
-    .sort((a, b) =>
-      a.totalSuccessfulPyrmaids - b.totalSuccessfulPyrmaids ||
-      a.totalFailedPyramids - b.totalFailedPyramids ||
-      a.dailySuccessfulPyramids - b.dailySuccessfulPyramids ||
-      a.dailyFailedPyramids - b.dailyFailedPyramids ||
-      a.username > b.username
-        ? 1
-        : -1
-    )
-    .reverse()
-    .slice(0, 10);
+export const handleAdminCommands = async (message: Message) => {
+  switch (message.command) {
+    default:
+      await say(message.channel, 'Command not implemented yet, sorry!');
+      break;
+  }
+};
 
-  let msg = 'Top Pyramid Creators: ';
-  topChatters.forEach((c, i) => {
-    msg += `|| #${i + 1}: ${c.username} - ${c.totalSuccessfulPyrmaids} `;
-  });
+let lastMessage: number;
 
-  await say(channel, msg).catch(Logger.Error);
+const getBuddy = async (
+  message: Message,
+  sheetId: string,
+  isGold: boolean = false
+) => {
+  const timeNow = new Date().getTime();
+  if (!lastMessage || timeNow - lastMessage > 2 * 1000) {
+    lastMessage = timeNow;
+    let heroName = cleanString(message.message, 1);
+    if (!heroName) {
+      say(
+        message.channel,
+        `Please type !buddy <heroName> (or !gbuddy for golden) to use this feature happ ${message.tags.username}`
+      );
+    } else {
+      const tag =
+        heroName.split(' ').find(s => s.includes('@')) ?? message.tags.username;
+      if (tag && tag.replace('@', '') !== heroName) {
+        heroName = cleanString(heroName.replace(tag, ''))
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+      lastMessage = timeNow;
+      const bookId = '14HIzwwJHrse0zgkdkKlycAue7Y7EGQSOthHZST4ArSY';
+      const parser = new PublicGoogleSheetsParser();
+      const data = await parser.parse(bookId, {sheetId: sheetId});
+      const buddies: Buddy[] = data.map((b: Buddy) => new Buddy(b));
+      const buddy = buddies.filter(b => b.isHero(heroName) && !!b.Name);
+      switch (buddy.length) {
+        case 1:
+          say(
+            message.channel,
+            `${isGold ? 'Golden ' : ''}${buddy[0].fullText()} ${tag}`
+          );
+          break;
+        case 0:
+          break;
+        default:
+          say(
+            message.channel,
+            `${heroName} matches ${makeArrayString(
+              buddy.map(b => b.Hero)
+            )}, please be more specific. ${tag}`
+          );
+      }
+    }
+  }
+};
+
+const makeArrayString = (arr: string[]) => {
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+  const len = Math.min(5, arr.length - 1);
+  const firsts = arr.slice(0, len);
+  const last = arr[len];
+  if (arr.length > 5) {
+    return firsts.join(', ') + ', ' + last + `, and ${arr.length - 5} more`;
+  }
+  return firsts.join(', ') + ' and ' + last;
 };

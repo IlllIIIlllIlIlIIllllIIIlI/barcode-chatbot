@@ -8,6 +8,8 @@ interface ENV {
   DEBUG: boolean;
   USERNAME: string | undefined;
   CHANNELS: string[] | undefined;
+  CLIENT_ID: string | undefined;
+  CLIENT_SECRET: string | undefined;
 }
 
 interface Config {
@@ -15,6 +17,8 @@ interface Config {
   DEBUG: boolean;
   USERNAME: string;
   CHANNELS: string[];
+  CLIENT_ID: string;
+  CLIENT_SECRET: string;
 }
 
 const getConfig = (): ENV => {
@@ -23,6 +27,8 @@ const getConfig = (): ENV => {
     DEBUG: process.env.DEBUG === 'true',
     USERNAME: process.env.USERNAME,
     CHANNELS: process.env.CHANNELS?.split(';'),
+    CLIENT_ID: process.env.CLIENT_ID,
+    CLIENT_SECRET: process.env.CLIENT_SECRET,
   };
 };
 

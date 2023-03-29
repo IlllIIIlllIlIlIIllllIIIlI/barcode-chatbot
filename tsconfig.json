@@ -9,6 +9,7 @@
     "sourceMap": false,
     "pretty": false,
     "declaration": false,
+    "strictNullChecks": true,
     "typeRoots": ["./global.d.ts", "./node_modules/@types"]
   },
   "include": ["src/**/*.ts"]

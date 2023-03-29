@@ -14,3 +14,40 @@ model Chatter {
   createdOn          DateTime @default(now())
   modifiedOn         DateTime @updatedAt
 }
+
+model MinionType {
+  id         Int            @id @unique
+  name       String
+  slug       String
+  cards      TypesOnCards[]
+  createdOn  DateTime       @default(now())
+  modifiedOn DateTime       @updatedAt
+}
+
+model Card {
+  id          Int            @id @unique
+  slug        String
+  minionTypes TypesOnCards[]
+  health      Int
+  attack      Int?
+  manaCost    Int
+  name        String
+  text        String
+  tier        Int?
+  isHero      Boolean
+  isQuest     Boolean
+
+  createdOn  DateTime @default(now())
+  modifiedOn DateTime @updatedAt
+}
+
+model TypesOnCards {
+  card         Card       @relation(fields: [cardId], references: [id])
+  cardId       Int
+  minionType   MinionType @relation(fields: [minionTypeId], references: [id])
+  minionTypeId Int
+  createdOn    DateTime   @default(now())
+  modifiedOn   DateTime   @updatedAt
+
+  @@id([cardId, minionTypeId])
+}

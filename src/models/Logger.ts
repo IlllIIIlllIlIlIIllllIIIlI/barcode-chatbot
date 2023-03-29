@@ -1,6 +1,6 @@
 import {writeFileSync, mkdirSync, existsSync} from 'fs';
 import {join} from 'path';
-import {EventBus} from '.';
+import {EventBus, Message} from '.';
 
 export class Logger extends EventBus<object> {
   private static _instance: Logger;
@@ -26,9 +26,19 @@ export class Logger extends EventBus<object> {
     });
   };
 
-  private _format = (data: string | object | unknown) => {
-    const content =
-      typeof data === 'string' ? data : JSON.stringify(data, null, 4);
+  private _format = (data: string | any) => {
+    let content;
+    if (typeof data === 'string') {
+      content = data;
+    } else if (typeof data === typeof Message) {
+      data = data.message;
+    } else {
+      try {
+        content = JSON.stringify(data, null, 4);
+      } catch {
+        content = data;
+      }
+    }
     const result = `------------------------------------------------- \n
       # ${new Date().toLocaleString()}: \n ${content} \n`;
     return result;

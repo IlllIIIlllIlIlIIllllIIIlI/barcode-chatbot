@@ -1,29 +1,8 @@
-import {Client, EventBus, Message, Logger, Cache} from './models';
-import {
-  handleCommands,
-  handleAdminCommands,
-  handlePyramids,
-  saveAndLoadChatters,
-  say,
-} from './scripts';
-
-const _initBus = () => {
-  const bus = new EventBus<Message>();
-
-  bus.listen(m => !!m.tags.username && !m.isCommand, handlePyramids);
-  bus.listen(m => m.isCommand && !m.isAdmin, handleCommands);
-  bus.listen(m => m.isAdmin, handleAdminCommands);
-
-  return bus;
-};
+import {Client, Message, Logger} from './models';
+import {initBus, say} from './scripts';
 
 const main = async () => {
-  const bus = _initBus();
-  await Cache.Load();
-
-  setInterval(async () => {
-    await saveAndLoadChatters();
-  }, 3600000);
+  const bus = initBus();
 
   Client.Instance.client.connect().catch(Logger.Error);
   Client.Instance.client.on('message', (channel, tags, message, self) => {
