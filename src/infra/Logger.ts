@@ -1,6 +1,7 @@
 import {writeFileSync, mkdirSync, existsSync} from 'fs';
 import {join} from 'path';
-import {EventBus, Message} from '.';
+import {EventBus} from '.';
+import {Message} from '../models';
 
 export class Logger extends EventBus<object> {
   private static _instance: Logger;

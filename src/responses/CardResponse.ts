@@ -1,4 +1,4 @@
-declare interface Battlegrounds{
+declare interface Battlegrounds {
   tier?: number;
   hero: boolean;
   quest: boolean;
@@ -7,7 +7,7 @@ declare interface Battlegrounds{
   upgradeId?: number;
 }
 
-export class Card{
+export class CardResponse {
   id?: number;
   slug?: string;
   minionTypeId?: number;

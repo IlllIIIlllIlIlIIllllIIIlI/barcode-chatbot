@@ -1,5 +1,5 @@
 import {AccessToken, ClientCredentials, ModuleOptions} from 'simple-oauth2';
-import {Logger} from './Logger';
+import {Logger} from '../infra';
 
 export class OAuthClient {
   client: ClientCredentials;
@@ -21,6 +21,8 @@ export class OAuthClient {
     } catch (err) {
       Logger.Error(err);
     }
+
+    return this.token;
   };
 
   private _reduceToken = (token: AccessToken | void) => {

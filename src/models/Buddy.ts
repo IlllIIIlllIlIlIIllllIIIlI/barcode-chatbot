@@ -1,4 +1,4 @@
-import {cleanString} from '../scripts';
+import {cleanString} from '../util';
 
 export class Buddy {
   Name = '';

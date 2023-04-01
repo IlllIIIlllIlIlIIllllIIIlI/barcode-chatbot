@@ -1,13 +1,13 @@
-import {Client as TClient} from 'tmi.js';
-import {sanitizedConfig} from '.';
+import {Client} from 'tmi.js';
+import {Config} from '../infra';
 
-export class Client {
-  client: TClient;
-  private static _instance: Client;
+export class TwitchClient {
+  connection: Client;
+  private static _instance: TwitchClient;
 
   private constructor() {
-    const config = sanitizedConfig;
-    this.client = new TClient({
+    const config = new Config();
+    this.connection = new Client({
       options: {debug: config.DEBUG},
       identity: {
         username: config.USERNAME,
