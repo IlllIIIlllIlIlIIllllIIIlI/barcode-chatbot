@@ -35,8 +35,10 @@ model Card {
   name        String
   text        String
   tier        Int?
+  armor       Int?
   isHero      Boolean
   isQuest     Boolean
+  upgradeId   Int?
 
   createdOn  DateTime @default(now())
   modifiedOn DateTime @updatedAt

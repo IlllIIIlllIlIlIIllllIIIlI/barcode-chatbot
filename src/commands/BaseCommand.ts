@@ -3,6 +3,6 @@ export abstract class BaseCommand {
   protected abstract timeout: number;
 
   constructor() {
-    this.lastMessage = new Date().getTime();
+    this.lastMessage = 0;
   }
 }

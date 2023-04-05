@@ -44,10 +44,10 @@ export const getTagAndCommandText = (
     message.tags.username ??
     '';
   if (tag && tag.replace('@', '') !== commandText) {
-    commandText = cleanString(commandText.replace(tag, ''))
+    commandText = cleanString(commandText.split('@')[0])
       .replace(/\s+/g, ' ')
       .trim();
   }
 
-  return [commandText, tag];
+  return [commandText, tag.replace('@', '')];
 };

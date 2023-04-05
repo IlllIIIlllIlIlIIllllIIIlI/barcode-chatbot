@@ -67,9 +67,11 @@ export class CardService extends BaseService {
           manaCost: c.manaCost ?? 0,
           name: c.name ?? '',
           text: c.text ?? '',
+          armor: c.armor,
           tier: c.battlegrounds?.tier,
           isHero: c.battlegrounds?.hero ?? false,
           isQuest: c.battlegrounds?.quest ?? false,
+          upgradeId: c.battlegrounds?.upgradeId,
           minionTypes: {
             connectOrCreate: typesToAttach,
           },
@@ -82,9 +84,11 @@ export class CardService extends BaseService {
           manaCost: c.manaCost ?? 0,
           name: c.name ?? '',
           text: c.text ?? '',
+          armor: c.armor,
           tier: c.battlegrounds?.tier,
           isHero: c.battlegrounds?.hero ?? false,
           isQuest: c.battlegrounds?.quest ?? false,
+          upgradeId: c.battlegrounds?.upgradeId,
           minionTypes: {
             connectOrCreate: typesToAttach,
           },

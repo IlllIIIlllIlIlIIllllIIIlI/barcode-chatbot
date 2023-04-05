@@ -22,6 +22,13 @@ export class CommandHandler {
       case 'card':
         await this.cards.getCard(message);
         break;
+      // case 'goldencard':
+      // case 'gcard':
+      //   await this.cards.getCard(message, false, true);
+      //   break;
+      // case 'hero':
+      //   await this.cards.getCard(message, true);
+      //   break;
     }
   };
 }

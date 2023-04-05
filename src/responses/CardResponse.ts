@@ -17,5 +17,6 @@ export class CardResponse {
   manaCost?: number;
   name?: string;
   text?: string;
+  armor?: number;
   battlegrounds?: Battlegrounds;
 }
