@@ -51,11 +51,11 @@ export class CardService extends BaseService {
       return;
     }
 
-    const allCards: CardResponse[] = (await cardResp.json())['cards'];
-    // const goldIds = cards
-    //   .map(c => c.battlegrounds?.upgradeId ?? 0)
-    //   .filter(c => c > 0);
-    // const allCards = cards.concat(this.getGoldCards(goldIds));
+    const cards: CardResponse[] = (await cardResp.json())['cards'];
+    const goldIds = cards
+      .map(c => c.battlegrounds?.upgradeId ?? 0)
+      .filter((c: number) => c > 0);
+    const allCards = cards.concat(await this.getGoldCards(goldIds));
     const types: MinionTypeResponse[] = await typeResp.json();
 
     allCards.forEach(async c => {
@@ -78,7 +78,7 @@ export class CardService extends BaseService {
           name: c.name,
           text: c.text,
           armor: c.armor,
-          tier: c.battlegrounds?.tier,
+          tier: c.battlegrounds?.tier || c.manaCost,
           minionTypes: {
             connectOrCreate: typesToAttach,
           },
@@ -91,9 +91,9 @@ export class CardService extends BaseService {
           name: c.name,
           text: c.text,
           armor: c.armor,
-          tier: c.battlegrounds?.tier,
+          tier: c.battlegrounds?.tier || c.manaCost,
           isHero: !!c.battlegrounds?.hero,
-          isGold: !!c.battlegrounds?.upgradeId,
+          isGold: !c.battlegrounds,
           upgradeId: c.battlegrounds?.upgradeId,
           minionTypes: {
             connectOrCreate: typesToAttach,
@@ -103,19 +103,18 @@ export class CardService extends BaseService {
     });
   };
 
-  private getGoldCards = (cardIds: number[]) => {
+  private getGoldCards = async (cardIds: number[]) => {
     const cards: CardResponse[] = [];
-    cardIds.forEach(async c => {
+
+    for (const id of cardIds) {
       const resp = await this.getResponse(
-        `https://us.api.blizzard.com/hearthstone/cards/${c}?locale=en_US`
+        `https://us.api.blizzard.com/hearthstone/cards/${id}?locale=en_US`
       );
 
       if (resp.ok) {
         cards.push(await resp.json());
-      } else {
-        console.log(resp.status);
       }
-    });
+    }
 
     return cards;
   };

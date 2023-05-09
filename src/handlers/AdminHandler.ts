@@ -7,6 +7,10 @@ export class AdminHandler {
     switch (message.command) {
       case 'updatecards':
         const service = new CardService();
+        await say(
+          message.channel,
+          `Starting card update, this may take a minute! ${message.tags.username}`
+        );
         await service.updateCards();
         await say(message.channel, `Cards updated! ${message.tags.username}`);
         break;
