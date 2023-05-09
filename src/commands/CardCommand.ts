@@ -21,15 +21,11 @@ export class CardCommand extends BaseCommand {
     this.cardService = new CardService();
   }
 
-  getCard = async (
-    message: Message,
-    isHero: boolean = false,
-    isGold: boolean = false
-  ) => {
-    const cardText = isHero ? 'hero' : 'card';
+  getCard = async (message: Message, isGold: boolean = false) => {
     const allCards = await this.db.card.findMany({
       where: {
-        isHero: isHero,
+        isHero: false,
+        isGold: isGold,
       },
       include: {
         minionTypes: true,
@@ -42,10 +38,7 @@ export class CardCommand extends BaseCommand {
       if (!cardName) {
         say(
           message.channel,
-          `Please type !${cardText} <${cardText}Name> ${
-            ''
-            // isHero ? '' : 'or !gcard for golden'
-          } to use this feature happ ${message.tags.username}`
+          `Please type !card <cardName> or !gcard for golden to use this feature happ ${message.tags.username}`
         );
       } else {
         const cards = allCards.filter(

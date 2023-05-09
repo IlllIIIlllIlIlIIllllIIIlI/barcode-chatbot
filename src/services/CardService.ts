@@ -21,6 +21,14 @@ export class CardService extends BaseService {
     this.db = new PrismaClient();
   }
 
+  update = async () => {
+    await this.updateCards();
+
+    setInterval(async () => {
+      await this.updateCards();
+    }, 86400000);
+  };
+
   updateCards = async () => {
     const cardUrl =
       'https://us.api.blizzard.com/hearthstone/cards?locale=en_US&gameMode=battlegrounds&pageSize=20000';
@@ -43,51 +51,49 @@ export class CardService extends BaseService {
       return;
     }
 
-    const cards: CardResponse[] = (await cardResp.json())['cards'];
+    const allCards: CardResponse[] = (await cardResp.json())['cards'];
+    // const goldIds = cards
+    //   .map(c => c.battlegrounds?.upgradeId ?? 0)
+    //   .filter(c => c > 0);
+    // const allCards = cards.concat(this.getGoldCards(goldIds));
     const types: MinionTypeResponse[] = await typeResp.json();
 
-    cards.forEach(async c => {
+    allCards.forEach(async c => {
       const minionTypes = types.filter(
         t => t.id && (t.id === c.minionTypeId || c.multiTypeIds?.includes(t.id))
       );
       const typesToAttach = minionTypes.map(m => ({
-        where: {id: m.id ?? 0},
+        where: {id: m.id},
         create: {
-          id: m.id ?? 0,
-          name: m.name ?? '',
-          slug: m.slug ?? '',
+          id: m.id,
+          name: m.name,
+          slug: m.slug,
         },
       }));
       await this.db.card.upsert({
         where: {id: c.id},
         update: {
-          slug: c.slug ?? '',
-          health: c.health ?? 0,
+          health: c.health,
           attack: c.attack,
-          manaCost: c.manaCost ?? 0,
-          name: c.name ?? '',
-          text: c.text ?? '',
+          name: c.name,
+          text: c.text,
           armor: c.armor,
           tier: c.battlegrounds?.tier,
-          isHero: c.battlegrounds?.hero ?? false,
-          isQuest: c.battlegrounds?.quest ?? false,
-          upgradeId: c.battlegrounds?.upgradeId,
           minionTypes: {
             connectOrCreate: typesToAttach,
           },
         },
         create: {
-          id: c.id ?? 0,
-          slug: c.slug ?? '',
-          health: c.health ?? 0,
+          id: c.id,
+          slug: c.slug,
+          health: c.health,
           attack: c.attack,
-          manaCost: c.manaCost ?? 0,
-          name: c.name ?? '',
-          text: c.text ?? '',
+          name: c.name,
+          text: c.text,
           armor: c.armor,
           tier: c.battlegrounds?.tier,
-          isHero: c.battlegrounds?.hero ?? false,
-          isQuest: c.battlegrounds?.quest ?? false,
+          isHero: !!c.battlegrounds?.hero,
+          isGold: !!c.battlegrounds?.upgradeId,
           upgradeId: c.battlegrounds?.upgradeId,
           minionTypes: {
             connectOrCreate: typesToAttach,
@@ -95,5 +101,22 @@ export class CardService extends BaseService {
         },
       });
     });
+  };
+
+  private getGoldCards = (cardIds: number[]) => {
+    const cards: CardResponse[] = [];
+    cardIds.forEach(async c => {
+      const resp = await this.getResponse(
+        `https://us.api.blizzard.com/hearthstone/cards/${c}?locale=en_US`
+      );
+
+      if (resp.ok) {
+        cards.push(await resp.json());
+      } else {
+        console.log(resp.status);
+      }
+    });
+
+    return cards;
   };
 }

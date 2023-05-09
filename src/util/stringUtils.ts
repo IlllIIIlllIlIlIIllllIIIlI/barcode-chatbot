@@ -1,11 +1,12 @@
 import {Message} from '../models';
+import {stopwords} from './stopwords';
 
 export const cleanString = (s: string, slice?: number) => {
   if (slice !== undefined) {
     return s
       .toLowerCase()
       .split(' ')
-      .filter(s => !!s.length && s !== 'the')
+      .filter(s => !!s.length && !stopwords.includes(s))
       .map(s => s.replace(/\s+/g, ' ').trim())
       .slice(slice)
       .join(' ')
@@ -15,7 +16,7 @@ export const cleanString = (s: string, slice?: number) => {
   return s
     .toLowerCase()
     .split(' ')
-    .filter(s => !!s.length && s !== 'the')
+    .filter(s => !!s.length && !stopwords.includes(s))
     .map(s => s.replace(/\s+/g, ' ').trim())
     .join(' ')
     .trim();

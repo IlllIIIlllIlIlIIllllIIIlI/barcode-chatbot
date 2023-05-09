@@ -2,9 +2,13 @@ import {Message} from './models';
 import {TwitchClient} from './clients';
 import {initBus, say} from './util';
 import {Logger} from './infra';
+import {CardService} from './services';
 
 const main = async () => {
+  const cardService = new CardService();
   const bus = initBus();
+
+  cardService.update();
 
   TwitchClient.Instance.connection.connect().catch(Logger.Error);
   TwitchClient.Instance.connection.on(

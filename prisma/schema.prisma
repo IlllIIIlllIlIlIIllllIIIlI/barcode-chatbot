@@ -31,14 +31,13 @@ model Card {
   minionTypes MinionType[]
   health      Int
   attack      Int?
-  manaCost    Int
   name        String
   text        String
   tier        Int?
   armor       Int?
   isHero      Boolean
-  isQuest     Boolean
   upgradeId   Int?
+  isGold      Boolean      @default(false)
 
   createdOn  DateTime @default(now())
   modifiedOn DateTime @updatedAt

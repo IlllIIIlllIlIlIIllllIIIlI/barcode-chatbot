@@ -1,5 +1,5 @@
-export class MinionTypeResponse {
-  id?: number;
-  name?: string;
-  slug?: string;
+export interface MinionTypeResponse {
+  id: number;
+  name: string;
+  slug: string;
 }
