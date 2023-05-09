@@ -13,7 +13,6 @@ export interface CardResponse {
   multiTypeIds?: number[];
   health: number;
   attack?: number;
-  manaCost?: number;
   name: string;
   text: string;
   armor?: number;

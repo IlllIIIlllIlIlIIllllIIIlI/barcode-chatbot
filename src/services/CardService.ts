@@ -78,7 +78,7 @@ export class CardService extends BaseService {
           name: c.name,
           text: c.text,
           armor: c.armor,
-          tier: c.battlegrounds?.tier || c.manaCost,
+          tier: c.battlegrounds?.tier,
           minionTypes: {
             connectOrCreate: typesToAttach,
           },
@@ -91,9 +91,9 @@ export class CardService extends BaseService {
           name: c.name,
           text: c.text,
           armor: c.armor,
-          tier: c.battlegrounds?.tier || c.manaCost,
+          tier: c.battlegrounds?.tier,
           isHero: !!c.battlegrounds?.hero,
-          isGold: !c.battlegrounds,
+          isGold: !c.battlegrounds?.upgradeId,
           upgradeId: c.battlegrounds?.upgradeId,
           minionTypes: {
             connectOrCreate: typesToAttach,
@@ -108,7 +108,7 @@ export class CardService extends BaseService {
 
     for (const id of cardIds) {
       const resp = await this.getResponse(
-        `https://us.api.blizzard.com/hearthstone/cards/${id}?locale=en_US`
+        `https://us.api.blizzard.com/hearthstone/cards/${id}?locale=en_US&gameMode=battlegrounds`
       );
 
       if (resp.ok) {
