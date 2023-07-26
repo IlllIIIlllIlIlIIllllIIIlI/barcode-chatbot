@@ -86,7 +86,7 @@ export class CardService extends BaseService {
         create: {
           id: c.id,
           slug: c.slug,
-          health: c.health,
+          health: c.health || 0,
           attack: c.attack,
           name: c.name,
           text: c.text,
