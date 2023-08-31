@@ -1,21 +1,18 @@
-declare interface Battlegrounds {
-  tier?: number;
-  hero: boolean;
-  reward: boolean;
-  companionId?: number;
-  upgradeId?: number;
-}
-
 export interface CardResponse {
-  id: number;
-  slug: string;
-  minionTypeId?: number;
-  multiTypeIds?: number[];
+  dbfId: number;
   health: number;
   attack?: number;
   name: string;
-  text: string;
+  text?: string;
   armor?: number;
-  battlegrounds?: Battlegrounds;
-  isGold: boolean;
+  type: string;
+  races?: string[];
+  techLevel?: number;
+
+  battlegroundsBuddyDbfId?: number;
+  battlegroundsHero?: boolean;
+  isBattlegroundsBuddy?: boolean;
+  heroPowerDbfId?: number;
+  battlegroundsPremiumDbfId?: number;
+  battlegroundsNormalDbfId?: number;
 }

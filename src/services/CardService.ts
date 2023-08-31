@@ -1,121 +1,47 @@
-import {PrismaClient} from '@prisma/client';
-import {BaseService, OAuthOptions} from '.';
-import {Logger, Config} from '../infra';
-import {CardResponse, MinionTypeResponse} from '../responses';
+import {Logger} from '../infra';
+import {CardResponse} from '../responses';
+import fetch from 'node-fetch';
+import {writeFileSync, mkdirSync, existsSync} from 'fs';
+import {join} from 'path';
 
-export class CardService extends BaseService {
-  db: PrismaClient;
+export class CardService {
+  private _path: string;
 
-  constructor(_oauthOptions?: OAuthOptions) {
-    const config = new Config();
-    const oauthOptions = _oauthOptions || {
-      client: {
-        id: config.CLIENT_ID,
-        secret: config.CLIENT_SECRET,
-      },
-      auth: {
-        tokenHost: 'https://us.battle.net',
-      },
-    };
-    super(oauthOptions);
-    this.db = new PrismaClient();
+  constructor() {
+    this._path = join(__dirname, '../data/');
+    if (!existsSync(this._path)) {
+      mkdirSync(this._path);
+    }
   }
 
-  update = async () => {
-    await this.updateCards();
+  init = () => {
+    this.updateCards();
 
-    setInterval(async () => {
-      await this.updateCards();
-    }, 86400000);
+    setInterval(() => {
+      this.updateCards();
+      Logger.Info('Updated cards');
+    }, 3600000);
   };
 
-  updateCards = async () => {
-    const cardUrl =
-      'https://us.api.blizzard.com/hearthstone/cards?locale=en_US&gameMode=battlegrounds&pageSize=20000';
-    const typeUrl =
-      'https://us.api.blizzard.com/hearthstone/metadata/minionTypes?locale=en_US';
+  updateCards = () => {
+    fetch('https://api.hearthstonejson.com/v1/184727/enUS/cards.json')
+      .then(response => {
+        return response.json();
+      })
+      .then((myJson: CardResponse[]) => {
+        const cards = myJson.filter(
+          c =>
+            !!c.battlegroundsHero ||
+            !!c.isBattlegroundsBuddy ||
+            !!c.battlegroundsPremiumDbfId ||
+            !!c.battlegroundsNormalDbfId
+        );
+        const data = JSON.stringify(cards, null, 4);
+        const path = join(this._path, 'cards.json');
 
-    const cardResp = await this.getResponse(cardUrl);
-    if (!cardResp.ok) {
-      Logger.Error(
-        `Error getting cards - ${cardResp.status}: ${cardResp.statusText}`
-      );
-      return;
-    }
-
-    const typeResp = await this.getResponse(typeUrl);
-    if (!typeResp.ok) {
-      Logger.Error(
-        `Error getting types - ${typeResp.status}: ${typeResp.statusText}`
-      );
-      return;
-    }
-
-    const cards: CardResponse[] = (await cardResp.json())['cards'];
-    const goldIds = cards
-      .map(c => c.battlegrounds?.upgradeId ?? 0)
-      .filter((c: number) => c > 0);
-    const allCards = cards.concat(await this.getGoldCards(goldIds));
-    const types: MinionTypeResponse[] = await typeResp.json();
-
-    allCards.forEach(async c => {
-      const minionTypes = types.filter(
-        t => t.id && (t.id === c.minionTypeId || c.multiTypeIds?.includes(t.id))
-      );
-      const typesToAttach = minionTypes.map(m => ({
-        where: {id: m.id},
-        create: {
-          id: m.id,
-          name: m.name,
-          slug: m.slug,
-        },
-      }));
-      await this.db.card.upsert({
-        where: {id: c.id},
-        update: {
-          health: c.health,
-          attack: c.attack,
-          name: c.name,
-          text: c.text,
-          armor: c.armor,
-          tier: c.battlegrounds?.tier,
-          minionTypes: {
-            connectOrCreate: typesToAttach,
-          },
-        },
-        create: {
-          id: c.id,
-          slug: c.slug,
-          health: c.health || 0,
-          attack: c.attack,
-          name: c.name,
-          text: c.text,
-          armor: c.armor,
-          tier: c.battlegrounds?.tier,
-          isHero: !!c.battlegrounds?.hero,
-          isGold: !c.battlegrounds?.upgradeId,
-          upgradeId: c.battlegrounds?.upgradeId,
-          minionTypes: {
-            connectOrCreate: typesToAttach,
-          },
-        },
+        writeFileSync(path, data, {
+          flag: 'w+',
+        });
       });
-    });
-  };
-
-  private getGoldCards = async (cardIds: number[]) => {
-    const cards: CardResponse[] = [];
-
-    for (const id of cardIds) {
-      const resp = await this.getResponse(
-        `https://us.api.blizzard.com/hearthstone/cards/${id}?locale=en_US&gameMode=battlegrounds`
-      );
-
-      if (resp.ok) {
-        cards.push(await resp.json());
-      }
-    }
-
-    return cards;
   };
 }

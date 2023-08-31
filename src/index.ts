@@ -8,7 +8,7 @@ const main = async () => {
   const cardService = new CardService();
   const bus = initBus();
 
-  cardService.update();
+  cardService.init();
 
   TwitchClient.Instance.connection.connect().catch(Logger.Error);
   TwitchClient.Instance.connection.on(

@@ -10,7 +10,8 @@
     "pretty": false,
     "declaration": false,
     "strictNullChecks": true,
-    "typeRoots": ["./global.d.ts", "./node_modules/@types"]
+    "typeRoots": ["./global.d.ts", "./node_modules/@types"],
+    "resolveJsonModule": true
   },
   "include": ["src/**/*.ts"]
 }

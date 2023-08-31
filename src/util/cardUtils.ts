@@ -1,4 +1,6 @@
 import {Prisma} from '@prisma/client';
+import {CardResponse} from '../responses';
+import {toTitleCase} from './stringUtils';
 
 type CardsWithTypes = Prisma.CardGetPayload<{
   include: {minionTypes: true};
@@ -20,4 +22,19 @@ export const getText = (card: CardsWithTypes) => {
       .filter(s => !!s.length && s !== '-')
       .join(' | ');
   }
+};
+
+export const getResponseText = (card: CardResponse) => {
+  return [
+    card.name,
+    card.races?.map(r => toTitleCase(r)).join('/') ?? 'N',
+    `T${card.techLevel}`,
+    `${card.attack}/${card.health}`,
+    card.text
+      ?.replace(/(<([^>]+)>)/gi, '')
+      .replace('\n', ' ')
+      .replace('[x]', ''),
+  ]
+    .filter(s => !!s && !!s.length && s !== '-')
+    .join(' | ');
 };
