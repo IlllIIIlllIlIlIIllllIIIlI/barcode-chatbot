@@ -1,4 +1,4 @@
-import {CardResponse} from '../responses';
+import {CardResponse} from '../interfaces';
 import {toTitleCase} from './stringUtils';
 
 export const getResponseText = (card: CardResponse) => {

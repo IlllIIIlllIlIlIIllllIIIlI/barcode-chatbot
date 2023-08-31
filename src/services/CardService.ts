@@ -1,5 +1,5 @@
 import {Logger} from '../infra';
-import {CardResponse} from '../responses';
+import {CardResponse} from '../interfaces';
 import fetch from 'node-fetch';
 import {writeFileSync, mkdirSync, existsSync} from 'fs';
 import {join} from 'path';

@@ -21,7 +21,9 @@ const main = async () => {
   );
   TwitchClient.Instance.connection.on('redeem', (channel, _, type, ___) => {
     if (type === '00c5b9f1-ff6f-4bfd-978f-ccaf99d76a2e') {
-      say(channel, '-500k KEKW');
+      setTimeout(() => {
+        say(channel, '-500k KEKW');
+      }, 1000);
     }
   });
 };

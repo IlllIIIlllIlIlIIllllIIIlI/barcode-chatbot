@@ -1,5 +1,5 @@
 import {Message} from '../models';
-import {CardResponse} from '../responses';
+import {CardResponse} from '../interfaces';
 import {
   getTagAndCommandText,
   say,
