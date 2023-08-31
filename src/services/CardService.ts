@@ -34,14 +34,17 @@ export class CardService {
             !!c.battlegroundsHero ||
             !!c.isBattlegroundsBuddy ||
             !!c.battlegroundsPremiumDbfId ||
-            !!c.battlegroundsNormalDbfId
+            !!c.battlegroundsNormalDbfId ||
+            c.type == 'HERO_POWER'
         );
-        const data = JSON.stringify(cards, null, 4);
-        const path = join(this._path, 'cards.json');
 
-        writeFileSync(path, data, {
-          flag: 'w+',
-        });
+        writeFileSync(
+          join(this._path, 'cards.json'),
+          JSON.stringify(cards, null, 4),
+          {
+            flag: 'w+',
+          }
+        );
       });
   };
 }

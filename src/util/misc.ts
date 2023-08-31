@@ -1,6 +1,6 @@
 import {AdminHandler, CommandHandler, MessageHandler} from '../handlers';
 import {Message} from '../models';
-import {Config, EventBus, Logger} from '../infra';
+import {EventBus, Logger} from '../infra';
 import {TwitchClient} from '../clients';
 
 export const initBus = () => {
@@ -8,9 +8,8 @@ export const initBus = () => {
   const commandHandler = new CommandHandler();
   const adminHandler = new AdminHandler();
   const messageHandler = new MessageHandler();
-  const config = new Config();
 
-  bus.listen(m => m.message.includes(config.USERNAME), Logger.Chat);
+  bus.listen(m => m.message.includes('barcode_chatbot'), Logger.Chat);
   bus.listen(m => !m.isCommand && !m.isBot, messageHandler.handle);
   bus.listen(m => m.isCommand && !m.isAdmin, commandHandler.handle);
   bus.listen(m => m.isAdmin, adminHandler.handle);

@@ -34,6 +34,7 @@ export class CardCommand extends BaseCommand {
           ? allCards.filter(c => !!c.battlegroundsNormalDbfId)
           : allCards.filter(c => !!c.battlegroundsPremiumDbfId);
 
+        // on the off chance twitch chat knows how to type
         const exactMatch = relevantMinions.find(
           c => cleanString(c.name) === cardName
         );
@@ -43,6 +44,7 @@ export class CardCommand extends BaseCommand {
             `${isGold ? 'Golden ' : ''}${getResponseText(exactMatch)} ${tag}`
           );
         } else {
+          // most likely match scenario
           const nextMatch = relevantMinions.filter(c =>
             cleanString(c.name).includes(cardName)
           );
@@ -65,6 +67,7 @@ export class CardCommand extends BaseCommand {
                 );
             }
           } else {
+            // last ditch effort to be useful
             const finalMatch = relevantMinions.filter(c =>
               cardName
                 .split(' ')
