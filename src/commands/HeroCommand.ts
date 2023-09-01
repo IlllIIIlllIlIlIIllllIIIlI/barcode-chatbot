@@ -1,13 +1,20 @@
-import PublicGoogleSheetsParser from 'public-google-sheets-parser';
-import {Hero, Message} from '../models';
-import {getTagAndCommandText, makeArrayString, say} from '../util';
+import {Message} from '../models';
+import {
+  getTagAndCommandText,
+  makeArrayString,
+  say,
+  cleanString,
+  getHeroText,
+} from '../util';
 import {BaseCommand} from './BaseCommand';
+import {CardResponse} from '../interfaces';
+import heroAliases from '../data/heroAliases.json';
+import cardsJson from '../data/cards.json';
 
 export class HeroCommand extends BaseCommand {
   timeout: number = 2000;
-  bookId: string = '14HIzwwJHrse0zgkdkKlycAue7Y7EGQSOthHZST4ArSY';
 
-  get = async (message: Message, sheetId: string) => {
+  get = async (message: Message) => {
     const timeNow = new Date().getTime();
     if (timeNow - this.lastMessage > this.timeout) {
       this.lastMessage = timeNow;
@@ -19,23 +26,77 @@ export class HeroCommand extends BaseCommand {
         );
       } else {
         this.lastMessage = timeNow;
-        const parser = new PublicGoogleSheetsParser();
-        const data = await parser.parse(this.bookId, {sheetId: sheetId});
-        const heroes: Hero[] = data.map((b: Hero) => new Hero(b));
-        const hero = heroes.filter(b => b.isHero(heroName));
-        switch (hero.length) {
-          case 1:
-            say(message.channel, `${hero[0].fullText()} ${tag}`);
-            break;
-          case 0:
-            break;
-          default:
-            say(
-              message.channel,
-              `${heroName} matches ${makeArrayString(
-                hero.map(b => b.Hero)
-              )}, please be more specific. ${tag}`
+        const heroes: CardResponse[] = cardsJson.filter(
+          c => !!c.battlegroundsHero
+        );
+
+        let hero =
+          heroes.find(h => cleanString(h.name) == heroName) ||
+          heroes.find(
+            h =>
+              h.name ==
+              heroAliases.find(a => a.aliases.includes(heroName))?.name
+          );
+
+        if (hero) {
+          const heroPower = cardsJson.find(
+            c => c.type == 'HERO_POWER' && hero?.heroPowerDbfId == c.dbfId
+          )?.text;
+          say(message.channel, `${getHeroText(hero, heroPower)} ${tag}`);
+        } else {
+          const matches = heroes.filter(h =>
+            cleanString(h.name).includes(heroName)
+          );
+          if (matches.length) {
+            switch (matches.length) {
+              case 1:
+                const heroPower = cardsJson.find(
+                  c =>
+                    c.type == 'HERO_POWER' &&
+                    matches[0].heroPowerDbfId == c.dbfId
+                )?.text;
+                say(
+                  message.channel,
+                  `${getHeroText(matches[0], heroPower)} ${tag}`
+                );
+                break;
+              default:
+                say(
+                  message.channel,
+                  `${heroName} matches ${makeArrayString(
+                    matches.map(c => c.name)
+                  )}, please be more specific. ${tag}`
+                );
+            }
+          } else {
+            const finalMatch = heroes.filter(h =>
+              heroName
+                .split(' ')
+                .some(n => cleanString(h.name).split(' ').includes(n))
             );
+            if (finalMatch.length) {
+              switch (finalMatch.length) {
+                case 1:
+                  const heroPower = cardsJson.find(
+                    c =>
+                      c.type == 'HERO_POWER' &&
+                      finalMatch[0].heroPowerDbfId == c.dbfId
+                  )?.text;
+                  say(
+                    message.channel,
+                    `${getHeroText(finalMatch[0], heroPower)} ${tag}`
+                  );
+                  break;
+                default:
+                  say(
+                    message.channel,
+                    `${heroName} matches ${makeArrayString(
+                      finalMatch.map(c => c.name)
+                    )}, please be more specific. ${tag}`
+                  );
+              }
+            }
+          }
         }
       }
     }

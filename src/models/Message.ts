@@ -1,6 +1,6 @@
 import {ChatUserstate} from 'tmi.js';
 
-const adminCommands: string[] = ['updatecards'];
+const adminCommands: string[] = [];
 const bots = ['robonito', 'streamelements'];
 const powerUsers = ['illliiilllililiilllliiili'];
 const regex = /[^\x00-\x7F]/g;

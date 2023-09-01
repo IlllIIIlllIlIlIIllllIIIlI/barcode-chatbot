@@ -15,11 +15,11 @@ export class CommandHandler {
   handle = async (message: Message) => {
     switch (message.command) {
       case 'buddy':
-        await this.buddy.get(message, '485160647');
+        await this.buddy.get(message);
         break;
       case 'gbuddy':
       case 'goldenbuddy':
-        await this.buddy.get(message, '802395848', true);
+        await this.buddy.get(message, true);
         break;
       case 'card':
         await this.cards.getCard(message);
@@ -29,7 +29,7 @@ export class CommandHandler {
         await this.cards.getCard(message, true);
         break;
       case 'hero':
-        await this.heroes.get(message, '796606412');
+        await this.heroes.get(message);
         break;
     }
   };

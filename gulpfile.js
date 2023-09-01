@@ -9,7 +9,7 @@ const path = argv['t'] ? 'test' : 'dist';
 
 gulp.task('default', () => {
   return gulp
-    .src('src/**/*.ts')
+    .src(['src/**/*.ts', 'src/**/*.json'])
     .pipe(tsProject())
     .pipe(terser())
     .pipe(gulp.dest(path));

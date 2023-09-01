@@ -1,6 +1,82 @@
 [
   {
     "name": "A. F. Kay",
-    "aliases": ["AFK", "A.F.Kay"]
+    "aliases": ["afk", "a.f.kay"]
+  },
+  {
+    "name": "Al'Akir",
+    "aliases": ["alakir", "akir"]
+  },
+  {
+    "name": "Dancin' Deryl",
+    "aliases": ["daryl"]
+  },
+  {
+    "name": "Enhance-O Mechano",
+    "aliases": ["enhanceo", "enhanco"]
+  },
+  {
+    "name": "E.T.C., Band Manager",
+    "aliases": ["etc"]
+  },
+  {
+    "name": "Galewing",
+    "aliases": ["bird"]
+  },
+  {
+    "name": "King Mukla",
+    "aliases": ["monke", "monkey"]
+  },
+  {
+    "name": "Master Nguyen",
+    "aliases": ["panda"]
+  },
+  {
+    "name": "Millhouse Manastorm",
+    "aliases": ["milhouse"]
+  },
+  {
+    "name": "Millificent Manastorm",
+    "aliases": ["milificent"]
+  },
+  {
+    "name": "Mr. Bigglesworth",
+    "aliases": ["cat"]
+  },
+  {
+    "name": "Patchwerk",
+    "aliases": ["patchwork"]
+  },
+  {
+    "name": "Professor Putricide",
+    "aliases": ["pp"]
+  },
+  {
+    "name": "Pyramad",
+    "aliases": ["pyramid", "piramid"]
+  },
+  {
+    "name": "Ragnaros the Firelord",
+    "aliases": ["ragi"]
+  },
+  {
+    "name": "Silas Darkmoon",
+    "aliases": ["sylas"]
+  },
+  {
+    "name": "Sindragosa",
+    "aliases": ["sindy"]
+  },
+  {
+    "name": "Sneed",
+    "aliases": ["sneeds", "sned", "sneds"]
+  },
+  {
+    "name": "The Lich King",
+    "aliases": ["lichking"]
+  },
+  {
+    "name": "The Rat King",
+    "aliases": ["ratking"]
   }
 ]

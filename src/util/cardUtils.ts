@@ -1,7 +1,7 @@
 import {CardResponse} from '../interfaces';
 import {toTitleCase} from './stringUtils';
 
-export const getResponseText = (card: CardResponse) => {
+export const getCardText = (card: CardResponse) => {
   return [
     card.name,
     card.races?.map(r => toTitleCase(r)).join('/') ?? 'N',
@@ -12,6 +12,22 @@ export const getResponseText = (card: CardResponse) => {
       .replace('\n', ' ')
       .replace('[x]', ''),
   ]
-    .filter(s => !!s && !!s.length && s !== '-')
+    .filter(s => !!s && !!s.length)
+    .join(' | ');
+};
+
+export const getHeroText = (
+  hero: CardResponse,
+  heroPower: string | undefined
+) => {
+  return [
+    hero.name,
+    `Armor: ${hero.armor}`,
+    heroPower
+      ?.replace(/(<([^>]+)>)/gi, '')
+      .replace('\n', ' ')
+      .replace('[x]', ''),
+  ]
+    .filter(s => !!s && !!s.length)
     .join(' | ');
 };

@@ -5,7 +5,7 @@ import {
   say,
   makeArrayString,
   cleanString,
-  getResponseText,
+  getCardText,
 } from '../util';
 import {BaseCommand} from './BaseCommand';
 import {readFileSync} from 'fs';
@@ -41,7 +41,7 @@ export class CardCommand extends BaseCommand {
         if (exactMatch) {
           say(
             message.channel,
-            `${isGold ? 'Golden ' : ''}${getResponseText(exactMatch)} ${tag}`
+            `${isGold ? 'Golden ' : ''}${getCardText(exactMatch)} ${tag}`
           );
         } else {
           // most likely match scenario
@@ -53,7 +53,7 @@ export class CardCommand extends BaseCommand {
               case 1:
                 say(
                   message.channel,
-                  `${isGold ? 'Golden ' : ''}${getResponseText(
+                  `${isGold ? 'Golden ' : ''}${getCardText(
                     nextMatch[0]
                   )} ${tag}`
                 );
@@ -78,7 +78,7 @@ export class CardCommand extends BaseCommand {
                 case 1:
                   say(
                     message.channel,
-                    `${isGold ? 'Golden ' : ''}${getResponseText(
+                    `${isGold ? 'Golden ' : ''}${getCardText(
                       finalMatch[0]
                     )} ${tag}`
                   );

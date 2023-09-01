@@ -20,7 +20,7 @@ export class CardService {
     setInterval(() => {
       this.updateCards();
       Logger.Info('Updated cards');
-    }, 3600000);
+    }, 7200000);
   };
 
   updateCards = () => {

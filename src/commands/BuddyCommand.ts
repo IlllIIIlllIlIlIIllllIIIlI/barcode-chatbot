@@ -1,13 +1,20 @@
-import {Buddy, Message} from '../models';
-import {say, makeArrayString, getTagAndCommandText} from '../util';
-import PublicGoogleSheetsParser from 'public-google-sheets-parser';
+import {Message} from '../models';
+import {
+  say,
+  makeArrayString,
+  getTagAndCommandText,
+  getCardText,
+  cleanString,
+} from '../util';
 import {BaseCommand} from './BaseCommand';
+import heroAliases from '../data/heroAliases.json';
+import cardsJson from '../data/cards.json';
+import {CardResponse} from '../interfaces';
 
 export class BuddyCommand extends BaseCommand {
   timeout: number = 2000;
-  bookId: string = '14HIzwwJHrse0zgkdkKlycAue7Y7EGQSOthHZST4ArSY';
 
-  get = async (message: Message, sheetId: string, isGold: boolean = false) => {
+  get = async (message: Message, isGold: boolean = false) => {
     const timeNow = new Date().getTime();
     if (timeNow - this.lastMessage > this.timeout) {
       this.lastMessage = timeNow;
@@ -19,26 +26,99 @@ export class BuddyCommand extends BaseCommand {
         );
       } else {
         this.lastMessage = timeNow;
-        const parser = new PublicGoogleSheetsParser();
-        const data = await parser.parse(this.bookId, {sheetId: sheetId});
-        const buddies: Buddy[] = data.map((b: Buddy) => new Buddy(b));
-        const buddy = buddies.filter(b => b.isHero(heroName) && !!b.Name);
-        switch (buddy.length) {
-          case 1:
+        const buddies: CardResponse[] = cardsJson.filter(
+          c => !!c.isBattlegroundsBuddy
+        );
+        const heroes: CardResponse[] = cardsJson.filter(
+          c => !!c.battlegroundsHero
+        );
+
+        let hero =
+          heroes.find(h => cleanString(h.name) == heroName) ||
+          heroes.find(
+            h =>
+              h.name ==
+              heroAliases.find(a => a.aliases.includes(heroName))?.name
+          );
+
+        if (!hero) {
+          const matches = heroes.filter(h =>
+            cleanString(h.name).includes(heroName)
+          );
+          if (matches.length) {
+            switch (matches.length) {
+              case 1:
+                const match = isGold
+                  ? buddies.find(
+                      b =>
+                        b.battlegroundsNormalDbfId ==
+                        matches[0].battlegroundsBuddyDbfId
+                    )
+                  : buddies.find(
+                      b => b.dbfId == matches[0].battlegroundsBuddyDbfId
+                    );
+                if (match) {
+                  say(
+                    message.channel,
+                    `${isGold ? 'Golden ' : ''}${getCardText(match)} ${tag}`
+                  );
+                }
+                break;
+              default:
+                say(
+                  message.channel,
+                  `${heroName} matches ${makeArrayString(
+                    matches.map(c => c.name)
+                  )}, please be more specific. ${tag}`
+                );
+            }
+          }
+        } else {
+          const match = isGold
+            ? buddies.find(
+                b => b.battlegroundsNormalDbfId == hero?.battlegroundsBuddyDbfId
+              )
+            : buddies.find(b => b.dbfId == hero?.battlegroundsBuddyDbfId);
+          if (match) {
             say(
               message.channel,
-              `${isGold ? 'Golden ' : ''}${buddy[0].fullText()} ${tag}`
+              `${isGold ? 'Golden ' : ''}${getCardText(match)} ${tag}`
             );
-            break;
-          case 0:
-            break;
-          default:
-            say(
-              message.channel,
-              `${heroName} matches ${makeArrayString(
-                buddy.map(b => b.Hero)
-              )}, please be more specific. ${tag}`
+          } else {
+            const finalMatch = heroes.filter(h =>
+              heroName
+                .split(' ')
+                .some(n => cleanString(h.name).split(' ').includes(n))
             );
+            if (finalMatch.length) {
+              switch (finalMatch.length) {
+                case 1:
+                  const match = isGold
+                    ? buddies.find(
+                        b =>
+                          b.battlegroundsNormalDbfId ==
+                          hero?.battlegroundsBuddyDbfId
+                      )
+                    : buddies.find(
+                        b => b.dbfId == hero?.battlegroundsBuddyDbfId
+                      );
+                  if (match) {
+                    say(
+                      message.channel,
+                      `${isGold ? 'Golden ' : ''}${getCardText(match)} ${tag}`
+                    );
+                  }
+                  break;
+                default:
+                  say(
+                    message.channel,
+                    `${heroName} matches ${makeArrayString(
+                      finalMatch.map(c => c.name)
+                    )}, please be more specific. ${tag}`
+                  );
+              }
+            }
+          }
         }
       }
     }
