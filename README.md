@@ -6,5 +6,5 @@ This a a Hearthstone Battlegrounds bot that provides cards, heroes, and buddy st
 
 ## Coming Soon
 
-- API based Heroes and Buddies
+- Admin commands for managing hero aliases
 - Leaderboards

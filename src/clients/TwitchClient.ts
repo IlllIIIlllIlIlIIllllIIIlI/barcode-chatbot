@@ -1,12 +1,26 @@
 import {Client} from 'tmi.js';
 import {Config} from '../infra';
+import {OAuthClient} from './OAuthClient';
 
-export class TwitchClient {
-  connection: Client;
+export class TwitchClient extends OAuthClient {
+  connection: Client | null = null;
   private static _instance: TwitchClient;
 
   private constructor() {
     const config = new Config();
+
+    const oauthOptions = {
+      client: {
+        id: config.CLIENT_ID,
+        secret: config.CLIENT_SECRET,
+      },
+      auth: {
+        tokenHost: 'https://www.twitch.tv',
+      },
+    };
+
+    super(oauthOptions);
+    // this.setup(config);
     this.connection = new Client({
       options: {debug: config.DEBUG},
       identity: {
@@ -16,6 +30,19 @@ export class TwitchClient {
       channels: config.CHANNELS,
     });
   }
+
+  private setup = (config: Config) => {
+    this.getToken().then(() => {
+      this.connection = new Client({
+        options: {debug: config.DEBUG},
+        identity: {
+          username: config.USERNAME,
+          password: `oauth:${config.OAUTH}`,
+        },
+        channels: config.CHANNELS,
+      });
+    });
+  };
 
   public static get Instance() {
     return this._instance || (this._instance = new this());

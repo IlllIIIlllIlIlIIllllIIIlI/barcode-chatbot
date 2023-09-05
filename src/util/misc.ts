@@ -19,6 +19,6 @@ export const initBus = () => {
 
 export const say = async (channel: string, message: string) => {
   await TwitchClient.Instance.connection
-    .say(channel, message)
+    ?.say(channel, message)
     .catch(Logger.Error);
 };

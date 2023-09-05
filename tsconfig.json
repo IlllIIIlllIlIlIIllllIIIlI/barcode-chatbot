@@ -13,5 +13,5 @@
     "typeRoots": ["./global.d.ts", "./node_modules/@types"],
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.json"]
 }

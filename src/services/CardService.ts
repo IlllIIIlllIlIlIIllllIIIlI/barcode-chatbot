@@ -1,19 +1,11 @@
 import {Logger} from '../infra';
 import {CardResponse} from '../interfaces';
 import fetch from 'node-fetch';
-import {writeFileSync, mkdirSync, existsSync} from 'fs';
+import {writeFileSync} from 'fs';
 import {join} from 'path';
+import {BaseService} from './BaseService';
 
-export class CardService {
-  private _path: string;
-
-  constructor() {
-    this._path = join(__dirname, '../data/');
-    if (!existsSync(this._path)) {
-      mkdirSync(this._path);
-    }
-  }
-
+export class CardService extends BaseService {
   init = () => {
     this.updateCards();
 

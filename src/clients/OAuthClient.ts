@@ -19,6 +19,7 @@ export class OAuthClient {
       }
       this.token = this._reduceToken(this._token);
     } catch (err) {
+      console.log(err);
       Logger.Error(err);
     }
 
