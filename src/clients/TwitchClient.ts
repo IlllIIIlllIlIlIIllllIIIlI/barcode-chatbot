@@ -15,12 +15,31 @@ export class TwitchClient extends OAuthClient {
         secret: config.CLIENT_SECRET,
       },
       auth: {
-        tokenHost: 'https://www.twitch.tv',
+        tokenHost: 'https://id.twitch.tv/',
+        tokenPath: '/oauth2/token',
       },
     };
 
     super(oauthOptions);
-    // this.setup(config);
+    this.setup(config);
+  }
+
+  private setup = (config: Config) => {
+    // this.getToken()
+    //   .then(token => {
+    //     console.log(token);
+    //     this.connection = new Client({
+    //       options: {debug: config.DEBUG},
+    //       identity: {
+    //         username: config.USERNAME,
+    //         password: `oauth:${token}`,
+    //       },
+    //       channels: config.CHANNELS,
+    //     });
+    //   })
+    //   .finally(() => {
+    //     console.log('wut');
+    //   });
     this.connection = new Client({
       options: {debug: config.DEBUG},
       identity: {
@@ -28,19 +47,6 @@ export class TwitchClient extends OAuthClient {
         password: `oauth:${config.OAUTH}`,
       },
       channels: config.CHANNELS,
-    });
-  }
-
-  private setup = (config: Config) => {
-    this.getToken().then(() => {
-      this.connection = new Client({
-        options: {debug: config.DEBUG},
-        identity: {
-          username: config.USERNAME,
-          password: `oauth:${config.OAUTH}`,
-        },
-        channels: config.CHANNELS,
-      });
     });
   };
 

@@ -11,17 +11,10 @@ export class OAuthClient {
   }
 
   getToken = async () => {
-    try {
-      if (!this._token || this._token.expired()) {
-        this._token = await this.client
-          .getToken({}, {json: true})
-          .catch(Logger.Error);
-      }
-      this.token = this._reduceToken(this._token);
-    } catch (err) {
-      console.log(err);
-      Logger.Error(err);
+    if (!this._token || this._token.expired()) {
+      this._token = await this.client.getToken({}).catch(Logger.Error);
     }
+    this.token = this._reduceToken(this._token);
 
     return this.token;
   };

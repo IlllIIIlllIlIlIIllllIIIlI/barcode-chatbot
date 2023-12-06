@@ -8,6 +8,7 @@ export interface CardResponse {
   type: string;
   races?: string[];
   techLevel?: number;
+  cost?: number;
 
   battlegroundsBuddyDbfId?: number;
   battlegroundsHero?: boolean;

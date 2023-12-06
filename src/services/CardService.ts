@@ -16,7 +16,7 @@ export class CardService extends BaseService {
   };
 
   updateCards = () => {
-    fetch('https://api.hearthstonejson.com/v1/184727/enUS/cards.json')
+    fetch('https://api.hearthstonejson.com/v1/latest/enUS/cards.json')
       .then(response => {
         return response.json();
       })
@@ -27,7 +27,8 @@ export class CardService extends BaseService {
             !!c.isBattlegroundsBuddy ||
             !!c.battlegroundsPremiumDbfId ||
             !!c.battlegroundsNormalDbfId ||
-            c.type == 'HERO_POWER'
+            c.type == 'HERO_POWER' ||
+            c.type == 'BATTLEGROUND_SPELL'
         );
 
         writeFileSync(

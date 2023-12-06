@@ -31,3 +31,14 @@ export const getHeroText = (
     .filter(s => !!s && !!s.length)
     .join(' | ');
 };
+
+export const getSpellText = (spell: CardResponse) => {
+  return [
+    spell.name,
+    `T${spell.techLevel}`,
+    `Cost: ${spell.cost} Gold`,
+    spell.text,
+  ]
+    .filter(s => !!s && !!s.length)
+    .join(' | ');
+};

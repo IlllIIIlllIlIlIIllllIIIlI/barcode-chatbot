@@ -1,4 +1,10 @@
-import {BuddyCommand, CardCommand, HeroCommand, RankCommand} from '../commands';
+import {
+  BuddyCommand,
+  CardCommand,
+  HeroCommand,
+  RankCommand,
+  SpellCommand,
+} from '../commands';
 import {Message} from '../models';
 
 export class CommandHandler {
@@ -6,11 +12,13 @@ export class CommandHandler {
   private cards: CardCommand;
   private heroes: HeroCommand;
   private rank: RankCommand;
+  private spells: SpellCommand;
 
   constructor() {
     this.buddy = new BuddyCommand();
     this.cards = new CardCommand();
     this.heroes = new HeroCommand();
+    this.spells = new SpellCommand();
     this.rank = new RankCommand();
   }
 
@@ -33,6 +41,8 @@ export class CommandHandler {
       case 'hero':
         await this.heroes.get(message);
         break;
+      case 'spell':
+        await this.spells.getSpell(message);
       // case 'bgrank':
       //   this.rank.get(message);
       //   break;
