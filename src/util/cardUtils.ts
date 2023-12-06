@@ -37,7 +37,10 @@ export const getSpellText = (spell: CardResponse) => {
     spell.name,
     `T${spell.techLevel}`,
     `Cost: ${spell.cost} Gold`,
-    spell.text,
+    spell.text
+      ?.replace(/(<([^>]+)>)/gi, '')
+      .replace('\n', ' ')
+      .replace('[x]', ''),
   ]
     .filter(s => !!s && !!s.length)
     .join(' | ');
