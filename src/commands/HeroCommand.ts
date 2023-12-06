@@ -41,7 +41,7 @@ export class HeroCommand extends BaseCommand {
         if (hero) {
           const heroPower = cardsJson.find(
             c => c.type == 'HERO_POWER' && hero?.heroPowerDbfId == c.dbfId
-          )?.text;
+          );
           say(message.channel, `${getHeroText(hero, heroPower)} ${tag}`);
         } else {
           const matches = heroes.filter(h =>
@@ -54,7 +54,7 @@ export class HeroCommand extends BaseCommand {
                   c =>
                     c.type == 'HERO_POWER' &&
                     matches[0].heroPowerDbfId == c.dbfId
-                )?.text;
+                );
                 say(
                   message.channel,
                   `${getHeroText(matches[0], heroPower)} ${tag}`
@@ -81,7 +81,7 @@ export class HeroCommand extends BaseCommand {
                     c =>
                       c.type == 'HERO_POWER' &&
                       finalMatch[0].heroPowerDbfId == c.dbfId
-                  )?.text;
+                  );
                   say(
                     message.channel,
                     `${getHeroText(finalMatch[0], heroPower)} ${tag}`

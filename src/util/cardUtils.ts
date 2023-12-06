@@ -18,15 +18,16 @@ export const getCardText = (card: CardResponse) => {
 
 export const getHeroText = (
   hero: CardResponse,
-  heroPower: string | undefined
+  heroPower: CardResponse | undefined
 ) => {
   return [
     hero.name,
     `Armor: ${hero.armor}`,
-    heroPower
+    heroPower?.text
       ?.replace(/(<([^>]+)>)/gi, '')
       .replace('\n', ' ')
       .replace('[x]', ''),
+    `HP Cost: ${heroPower?.cost}`,
   ]
     .filter(s => !!s && !!s.length)
     .join(' | ');
