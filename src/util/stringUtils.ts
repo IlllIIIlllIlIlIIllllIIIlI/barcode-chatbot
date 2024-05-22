@@ -42,6 +42,7 @@ export const getTagAndCommandText = (
 
   const tag =
     commandText.split(' ').find(s => s.includes('@')) ??
+    message.tags['display-name'] ??
     message.tags.username ??
     '';
   if (tag && tag.replace('@', '') !== commandText) {
