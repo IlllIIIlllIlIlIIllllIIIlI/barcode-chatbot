@@ -31,15 +31,20 @@ export class SpellCommand extends BaseCommand {
     );
 
     if (possibleMatches) {
-      if (!Array.isArray(possibleMatches))
-        say(message.channel, `${getSpellText(possibleMatches)} ${tag}`);
-      else
+      if (possibleMatches instanceof Array && possibleMatches.length > 1)
         say(
           message.channel,
           `${spellName} matches ${makeArrayString(
             possibleMatches.map(c => c.name)
           )}, please be more specific. ${tag}`
         );
+      else {
+        const match =
+          possibleMatches instanceof Array
+            ? possibleMatches[0]
+            : possibleMatches;
+        say(message.channel, `${getSpellText(match)} ${tag}`);
+      }
     }
   };
 }
