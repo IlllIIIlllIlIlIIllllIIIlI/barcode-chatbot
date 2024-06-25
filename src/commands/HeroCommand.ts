@@ -43,7 +43,7 @@ export class HeroCommand extends BaseCommand {
 
     if (hero) {
       const heroPower = allCards.find(
-        c => c.type == 'HERO_POWER' && hero.heroPowerDbfId == c.dbfId
+        c => c.type == 'HERO_POWER' && hero?.heroPowerDbfId == c.dbfId
       );
       say(message.channel, `${getHeroText(hero, heroPower)} ${tag}`);
 

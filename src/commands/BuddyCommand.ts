@@ -79,9 +79,9 @@ export class BuddyCommand extends BaseCommand {
 
     const match = isGold
       ? buddies.find(
-          b => b.battlegroundsNormalDbfId == hero.battlegroundsBuddyDbfId
+          b => b.battlegroundsNormalDbfId == hero?.battlegroundsBuddyDbfId
         )
-      : buddies.find(b => b.dbfId == hero.battlegroundsBuddyDbfId);
+      : buddies.find(b => b.dbfId == hero?.battlegroundsBuddyDbfId);
     if (match) {
       say(
         message.channel,
@@ -99,9 +99,9 @@ export class BuddyCommand extends BaseCommand {
         case 1:
           const match = isGold
             ? buddies.find(
-                b => b.battlegroundsNormalDbfId == hero.battlegroundsBuddyDbfId
+                b => b.battlegroundsNormalDbfId == hero?.battlegroundsBuddyDbfId
               )
-            : buddies.find(b => b.dbfId == hero.battlegroundsBuddyDbfId);
+            : buddies.find(b => b.dbfId == hero?.battlegroundsBuddyDbfId);
           if (match) {
             say(
               message.channel,
