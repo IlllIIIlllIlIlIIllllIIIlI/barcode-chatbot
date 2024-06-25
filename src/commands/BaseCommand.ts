@@ -5,4 +5,12 @@ export abstract class BaseCommand {
   constructor() {
     this.lastMessage = 0;
   }
+
+  timeoutCheck = () => {
+    const timeNow = new Date().getTime();
+    if (timeNow - this.lastMessage < this.timeout) return false;
+
+    this.lastMessage = timeNow;
+    return true;
+  };
 }

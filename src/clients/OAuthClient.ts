@@ -12,7 +12,9 @@ export class OAuthClient {
 
   getToken = async () => {
     if (!this._token || this._token.expired()) {
-      this._token = await this.client.getToken({}).catch(Logger.Error);
+      this._token = await this.client
+        .getToken({scope: ['chat:read', 'chat:edit']})
+        .catch(Logger.Error);
     }
     this.token = this._reduceToken(this._token);
 

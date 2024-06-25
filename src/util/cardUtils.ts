@@ -1,5 +1,7 @@
+import {readFileSync} from 'fs';
 import {CardResponse} from '../interfaces';
-import {toTitleCase} from './stringUtils';
+import {cleanString, toTitleCase} from './stringUtils';
+import {join} from 'path';
 
 export const getCardText = (card: CardResponse) => {
   return [
@@ -45,4 +47,27 @@ export const getSpellText = (spell: CardResponse) => {
   ]
     .filter(s => !!s && !!s.length)
     .join(' | ');
+};
+
+export const matchCard = (
+  userInput: string,
+  filter: (value: any, index?: number, Array?: any[]) => boolean
+) => {
+  const allCards: CardResponse[] = JSON.parse(
+    readFileSync(join(__dirname, '../data/cards.json'), 'utf-8')
+  );
+  const cards = allCards.filter(filter);
+
+  const exactMatch = cards.find(c => cleanString(c.name) === userInput);
+  if (exactMatch) return exactMatch;
+
+  const nextMatch = cards.filter(c => cleanString(c.name).includes(userInput));
+  if (nextMatch.length) return nextMatch;
+
+  const finalMatch = cards.filter(c =>
+    userInput.split(' ').some(n => cleanString(c.name).split(' ').includes(n))
+  );
+  if (finalMatch.length) return finalMatch;
+
+  return null;
 };
