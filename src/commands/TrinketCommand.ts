@@ -19,7 +19,7 @@ export class TrinketCommand extends BaseCommand {
     if (!spellName) {
       say(
         message.channel,
-        `Please type !trinket <trinketName> or to use this feature happ ${message.tags.username}`
+        `Please type !trinket <trinketName> to use this feature happ ${message.tags.username}`
       );
 
       return;
