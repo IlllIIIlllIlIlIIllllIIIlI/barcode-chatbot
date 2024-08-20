@@ -49,6 +49,19 @@ export const getSpellText = (spell: CardResponse) => {
     .join(' | ');
 };
 
+export const getTrinketText = (trinket: CardResponse) => {
+  return [
+    trinket.name,
+    `${trinket.spellSchool?.includes('LESSER') ? 'Lesser' : 'Greater'} Trinket`,
+    trinket.text
+      ?.replace(/(<([^>]+)>)/gi, '')
+      .replace('\n', ' ')
+      .replace('[x]', ''),
+  ]
+    .filter(s => !!s && !!s.length)
+    .join(' | ');
+};
+
 export const matchCard = (
   userInput: string,
   filter: (value: any, index?: number, Array?: any[]) => boolean

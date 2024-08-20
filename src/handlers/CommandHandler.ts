@@ -5,6 +5,7 @@ import {
   RankCommand,
   SpellCommand,
 } from '../commands';
+import {TrinketCommand} from '../commands/TrinketCommand';
 import {Message} from '../models';
 
 export class CommandHandler {
@@ -13,6 +14,7 @@ export class CommandHandler {
   private heroes: HeroCommand;
   private rank: RankCommand;
   private spells: SpellCommand;
+  private trinkets: TrinketCommand;
 
   constructor() {
     this.buddy = new BuddyCommand();
@@ -20,6 +22,7 @@ export class CommandHandler {
     this.heroes = new HeroCommand();
     this.spells = new SpellCommand();
     this.rank = new RankCommand();
+    this.trinkets = new TrinketCommand();
   }
 
   handle = async (message: Message) => {
@@ -43,6 +46,10 @@ export class CommandHandler {
         break;
       case 'spell':
         await this.spells.getSpell(message);
+        break;
+      case 'trinket':
+        await this.trinkets.getSpell(message);
+        break;
       // case 'bgrank':
       //   this.rank.get(message);
       //   break;

@@ -7,7 +7,12 @@ export const cleanString = (s: string, slice?: number) => {
       .toLowerCase()
       .split(' ')
       .filter(s => !!s.length && !stopwords.includes(s))
-      .map(s => s.replace(/\s+/g, ' ').trim())
+      .map(s =>
+        s
+          .replace(/[^0-9a-z]/gi, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+      )
       .slice(slice)
       .join(' ')
       .trim();
@@ -17,7 +22,12 @@ export const cleanString = (s: string, slice?: number) => {
     .toLowerCase()
     .split(' ')
     .filter(s => !!s.length && !stopwords.includes(s))
-    .map(s => s.replace(/\s+/g, ' ').trim())
+    .map(s =>
+      s
+        .replace(/[^0-9a-z]/gi, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+    )
     .join(' ')
     .trim();
 };

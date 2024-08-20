@@ -28,7 +28,8 @@ export class CardService extends BaseService {
             !!c.battlegroundsPremiumDbfId ||
             !!c.battlegroundsNormalDbfId ||
             c.type == 'HERO_POWER' ||
-            c.type == 'BATTLEGROUND_SPELL'
+            c.type == 'BATTLEGROUND_SPELL' ||
+            c.type == 'BATTLEGROUND_TRINKET'
         );
 
         writeFileSync(

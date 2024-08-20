@@ -9,6 +9,7 @@ export interface CardResponse {
   races?: string[];
   techLevel?: number;
   cost?: number;
+  spellSchool?: string;
 
   battlegroundsBuddyDbfId?: number;
   battlegroundsHero?: boolean;
