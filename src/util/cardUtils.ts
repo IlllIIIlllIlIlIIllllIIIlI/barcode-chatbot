@@ -53,6 +53,7 @@ export const getTrinketText = (trinket: CardResponse) => {
   return [
     trinket.name,
     `${trinket.spellSchool?.includes('LESSER') ? 'Lesser' : 'Greater'} Trinket`,
+    `Cost: ${trinket.cost} Gold`,
     trinket.text
       ?.replace(/(<([^>]+)>)/gi, '')
       .replace('\n', ' ')
